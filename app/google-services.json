@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "714303082475",
+    "firebase_url": "https://bussinessmanagement-8ba51-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "bussinessmanagement-8ba51",
+    "storage_bucket": "bussinessmanagement-8ba51.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:714303082475:android:080a43b2c2ac218b1353ae",
+        "android_client_info": {
+          "package_name": "com.example.businessmanagement"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "714303082475-hic56u84smlvt95vktr2m5tmdred4i0c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6KxzIaaxblect8IXD74uyQO5jbgMcq3k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "714303082475-hic56u84smlvt95vktr2m5tmdred4i0c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

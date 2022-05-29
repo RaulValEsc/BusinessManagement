@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="180dp">
+
+    <TextView
+        android:id="@+id/tvNombreComercioPedido"
+        android:layout_width="243dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="35dp"
+        android:layout_marginLeft="35dp"
+        android:layout_marginBottom="8dp"
+        android:text="TextView"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/tvNombreProducto"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/ivItemPedido" />
+
+    <TextView
+        android:id="@+id/tvNombreProducto"
+        android:layout_width="wrap_content"
+        android:layout_height="37dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="48dp"
+        android:text="eqweq"
+        android:textSize="30sp"
+        app:layout_constraintStart_toEndOf="@+id/ivItemPedido"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvCantidadPedido"
+        android:layout_width="200dp"
+        android:layout_height="18dp"
+        android:layout_marginTop="16dp"
+        android:text="rewq"
+        app:layout_constraintStart_toStartOf="@+id/tvNombreProducto"
+        app:layout_constraintTop_toBottomOf="@+id/tvNombreProducto" />
+
+    <TextView
+        android:id="@+id/tvEstadoPedido"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="TextView"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/tvCantidadPedido"
+        app:layout_constraintStart_toStartOf="@+id/tvCantidadPedido"
+        app:layout_constraintTop_toBottomOf="@+id/tvCantidadPedido" />
+
+    <ImageView
+        android:id="@+id/ivItemPedido"
+        android:layout_width="118dp"
+        android:layout_height="97dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:contentDescription="TODO"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@tools:sample/avatars" />
+</androidx.constraintlayout.widget.ConstraintLayout>

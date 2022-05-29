@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".vistas.Producto.VistaProducto">
+
+    <ImageView
+        android:id="@+id/ivProducto"
+        android:layout_width="219dp"
+        android:layout_height="219dp"
+        android:layout_marginTop="84dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_camera"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/tvNombreProducto"
+        android:layout_width="157dp"
+        android:layout_height="37dp"
+        android:layout_marginStart="127dp"
+        android:layout_marginLeft="127dp"
+        android:layout_marginTop="344dp"
+        android:layout_marginEnd="127dp"
+        android:layout_marginRight="127dp"
+        android:gravity="center"
+        android:text="Nombre"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvStock"
+        android:layout_width="157dp"
+        android:layout_height="37dp"
+        android:layout_marginTop="25dp"
+        android:gravity="center"
+        android:text="Stock"
+        app:layout_constraintEnd_toEndOf="@+id/tvNombreProducto"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/tvNombreProducto"
+        app:layout_constraintTop_toBottomOf="@+id/tvNombreProducto" />
+
+    <TextView
+        android:id="@+id/tvPrecio"
+        android:layout_width="157dp"
+        android:layout_height="37dp"
+        android:layout_marginTop="25dp"
+        android:gravity="center"
+        android:text="Precio"
+        app:layout_constraintEnd_toEndOf="@+id/tvStock"
+        app:layout_constraintStart_toStartOf="@+id/tvStock"
+        app:layout_constraintTop_toBottomOf="@+id/tvStock" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/tbProducto"
+        android:layout_width="411dp"
+        android:layout_height="61dp"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

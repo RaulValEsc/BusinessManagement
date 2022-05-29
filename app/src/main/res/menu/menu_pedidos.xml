@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/miConfirmado"
+        android:title="Confirmar Pedido" />
+    <item
+        android:id="@+id/miEnviado"
+        android:title="Enviar Pedido" />
+    <item
+        android:id="@+id/miEntregado"
+        android:title="Entregar Pedido" />
+</menu>
