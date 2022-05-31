@@ -113,42 +113,6 @@ public class PedidoAdapter extends RecyclerView.Adapter<PedidoAdapter.PedidoView
 
                                 cantidad.setText("Cantidad : " + pedido.getCantidad());
 
-
-                                if (pedido.isPendiente()) {
-
-                                    estado.setText("Pedido pendiente de confirmación");
-                                    estado.setTextColor(Color.GRAY);
-
-                                }
-
-                                if (pedido.isConfirmado()) {
-
-                                    estado.setText("Pedido confirmado");
-                                    estado.setTextColor(Color.GREEN);
-
-                                }
-
-                                if (pedido.isRechazado()) {
-
-                                    estado.setText("Pedido rechazado");
-                                    estado.setTextColor(Color.RED);
-
-                                }
-
-                                if (pedido.isEntregado()) {
-
-                                    estado.setText("Pedido entregado");
-                                    estado.setTextColor(Color.MAGENTA);
-
-                                }
-
-                                if (pedido.isEnviado()) {
-
-                                    estado.setText("Pedido enviado");
-                                    estado.setTextColor(Color.BLUE);
-
-                                }
-
                             }
 
                         }

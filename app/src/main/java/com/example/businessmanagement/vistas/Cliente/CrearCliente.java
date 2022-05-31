@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.businessmanagement.R;
+import com.example.businessmanagement.modelos.Cliente;
 import com.example.businessmanagement.modelos.Comercio;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,7 +33,7 @@ public class CrearCliente extends AppCompatActivity {
 
     final int REQUEST_IMAGE_CAPTURE = 100;
 
-    private EditText nombreCliente, dniCliente;
+    private EditText nombreCliente, dniCliente, emailCliente, telefonoCliente;
     private Button crear;
     private boolean clienteexiste = false;
     DatabaseReference database;
@@ -48,8 +49,12 @@ public class CrearCliente extends AppCompatActivity {
         setContentView(R.layout.activity_crear_cliente);
 
         crear = findViewById(R.id.bCrearCliente);
+
         nombreCliente = findViewById(R.id.etnombreCliente);
         dniCliente = findViewById(R.id.dniCliente);
+        emailCliente = findViewById(R.id.emailCliente);
+        telefonoCliente = findViewById(R.id.telefonoCliente);
+
         ivCliente = findViewById(R.id.imageView);
 
         storage = FirebaseStorage.getInstance();
@@ -66,20 +71,24 @@ public class CrearCliente extends AppCompatActivity {
                 database.child("Clientes").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (imageUri != null) {
-                            for (DataSnapshot child : dataSnapshot.getChildren()) {
-                                if (dniCliente.getText().toString().equals(child.child("dni").getValue().toString())) {
-                                    clienteexiste = true;
-                                    break;
+                        if(nombreCliente.getText().toString().isEmpty()||dniCliente.getText().toString().isEmpty()){
+                            Toast.makeText(getApplicationContext(), "El nombre t dni son campos obligatorios", Toast.LENGTH_LONG).show();
+                        }else{
+                            if (imageUri != null) {
+                                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                                    if (dniCliente.getText().toString().equals(child.child("dni").getValue().toString())) {
+                                        clienteexiste = true;
+                                        break;
+                                    }
                                 }
-                            }
-                            if (clienteexiste == false) {
-                                crearComercio();
+                                if (clienteexiste == false) {
+                                    crearComercio();
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Este cliente ya está registrado", Toast.LENGTH_LONG).show();
+                                }
                             } else {
-                                Toast.makeText(getApplicationContext(), "Este cliente ya está registrado", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), "Tienes que introducir una imagen", Toast.LENGTH_LONG).show();
                             }
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Tienes que introducir una imagen", Toast.LENGTH_LONG).show();
                         }
                     }
 
@@ -171,7 +180,7 @@ public class CrearCliente extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (imageUri != null) {
-                    Comercio c = new Comercio(nombreCliente.getText().toString(), dniCliente.getText().toString(), imageUri, postStorage);
+                    Cliente c = new Cliente(nombreCliente.getText().toString(), dniCliente.getText().toString(), telefonoCliente.getText().toString(), emailCliente.getText().toString(), imageUri, postStorage);
                     database.child("Clientes").child(c.getNombre()).setValue(c);
                 }
             }
