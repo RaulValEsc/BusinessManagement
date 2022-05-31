@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/darkModeBackground"
-    tools:context=".vistas.Cliente.VistaCliente">
+    tools:context=".vistas.Proveedor.VistaProveedor">
 
     <ImageView
-        android:id="@+id/ivCliente"
+        android:id="@+id/ivProveedor"
         android:layout_width="219dp"
         android:layout_height="219dp"
         android:layout_marginTop="84dp"
@@ -19,28 +19,28 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
-        android:id="@+id/tvNombreCliente"
+        android:id="@+id/tvNombreProveedor"
         android:layout_width="157dp"
         android:layout_height="37dp"
         android:layout_marginTop="344dp"
-        android:textColor="@color/darkModeColor"
         android:gravity="center"
         android:text="Nombre"
-        app:layout_constraintEnd_toEndOf="@+id/ivCliente"
+        android:textColor="@color/darkModeColor"
+        app:layout_constraintEnd_toEndOf="@+id/ivProveedor"
         app:layout_constraintHorizontal_bias="0.516"
-        app:layout_constraintStart_toStartOf="@+id/ivCliente"
+        app:layout_constraintStart_toStartOf="@+id/ivProveedor"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tvDni"
+        android:id="@+id/tvNif"
         android:layout_width="157dp"
         android:layout_height="37dp"
         android:layout_marginTop="404dp"
         android:gravity="center"
         android:textColor="@color/darkModeColor"
-        android:text="DNI"
-        app:layout_constraintEnd_toEndOf="@+id/ivCliente"
-        app:layout_constraintStart_toStartOf="@+id/ivCliente"
+        android:text="NIF"
+        app:layout_constraintEnd_toEndOf="@+id/ivProveedor"
+        app:layout_constraintStart_toStartOf="@+id/ivProveedor"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -51,8 +51,8 @@
         android:gravity="center"
         android:textColor="@color/darkModeColor"
         android:text="Email"
-        app:layout_constraintEnd_toEndOf="@+id/ivCliente"
-        app:layout_constraintStart_toStartOf="@+id/ivCliente"
+        app:layout_constraintEnd_toEndOf="@+id/ivProveedor"
+        app:layout_constraintStart_toStartOf="@+id/ivProveedor"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -63,17 +63,17 @@
         android:gravity="center"
         android:textColor="@color/darkModeColor"
         android:text="Telefono"
-        app:layout_constraintEnd_toEndOf="@+id/ivCliente"
-        app:layout_constraintStart_toStartOf="@+id/ivCliente"
+        app:layout_constraintEnd_toEndOf="@+id/ivProveedor"
+        app:layout_constraintStart_toStartOf="@+id/ivProveedor"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/tbCliente"
+        android:id="@+id/tbProveedor"
         android:layout_width="411dp"
         android:layout_height="61dp"
+        android:textColor="@color/darkModeColor"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
-        android:textColor="@color/darkModeColor"
         android:theme="?attr/actionBarTheme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

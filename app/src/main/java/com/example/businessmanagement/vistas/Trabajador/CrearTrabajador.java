@@ -1,4 +1,4 @@
-package com.example.businessmanagement.vistas.Cliente;
+package com.example.businessmanagement.vistas.Trabajador;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -17,7 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.businessmanagement.R;
-import com.example.businessmanagement.modelos.Cliente;
+import com.example.businessmanagement.modelos.Trabajador;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -28,33 +28,33 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.Objects;
 
-public class CrearCliente extends AppCompatActivity {
+public class CrearTrabajador extends AppCompatActivity {
 
     final int REQUEST_IMAGE_CAPTURE = 100;
 
-    private EditText nombreCliente, dniCliente, emailCliente, telefonoCliente;
+    private EditText nombreTrabajador, dniTrabajador, emailTrabajador, telefonoTrabajador;
     private Button crear;
-    private boolean clienteexiste = false;
+    private boolean trabajadorexiste = false;
     DatabaseReference database;
     Uri imageUri, postStorage;
     String imgStorage;
-    private ImageView ivCliente;
+    private ImageView ivTrabajador;
 
     FirebaseStorage storage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_crear_cliente);
+        setContentView(R.layout.activity_crear_trabajador);
 
-        crear = findViewById(R.id.bCrearCliente);
+        crear = findViewById(R.id.bCrearTrabajador);
 
-        nombreCliente = findViewById(R.id.etnombreCliente);
-        dniCliente = findViewById(R.id.dniCliente);
-        emailCliente = findViewById(R.id.emailCliente);
-        telefonoCliente = findViewById(R.id.telefonoCliente);
+        nombreTrabajador = findViewById(R.id.etnombreTrabajador);
+        dniTrabajador = findViewById(R.id.dniTrabajador);
+        emailTrabajador = findViewById(R.id.emailTrabajador);
+        telefonoTrabajador = findViewById(R.id.telefonoTrabajador);
 
-        ivCliente = findViewById(R.id.imageView);
+        ivTrabajador = findViewById(R.id.imageView);
 
         storage = FirebaseStorage.getInstance();
 
@@ -67,23 +67,23 @@ public class CrearCliente extends AppCompatActivity {
         crear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                database.child("Clientes").addListenerForSingleValueEvent(new ValueEventListener() {
+                database.child("Trabajadores").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        if(nombreCliente.getText().toString().isEmpty()||dniCliente.getText().toString().isEmpty()){
+                        if(nombreTrabajador.getText().toString().isEmpty()||dniTrabajador.getText().toString().isEmpty()){
                             Toast.makeText(getApplicationContext(), "El nombre y dni son campos obligatorios", Toast.LENGTH_LONG).show();
                         }else{
                             if (imageUri != null) {
                                 for (DataSnapshot child : dataSnapshot.getChildren()) {
-                                    if (dniCliente.getText().toString().equals(child.child("dni").getValue().toString())) {
-                                        clienteexiste = true;
+                                    if (dniTrabajador.getText().toString().equals(child.child("dni").getValue().toString())) {
+                                        trabajadorexiste = true;
                                         break;
                                     }
                                 }
-                                if (clienteexiste == false) {
+                                if (trabajadorexiste == false) {
                                     crearComercio();
                                 } else {
-                                    Toast.makeText(getApplicationContext(), "Este cliente ya está registrado", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getApplicationContext(), "Este trabajador ya está registrado", Toast.LENGTH_LONG).show();
                                 }
                             } else {
                                 Toast.makeText(getApplicationContext(), "Tienes que introducir una imagen", Toast.LENGTH_LONG).show();
@@ -100,7 +100,7 @@ public class CrearCliente extends AppCompatActivity {
             }
         });
 
-        ivCliente.setOnClickListener(new View.OnClickListener() {
+        ivTrabajador.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 escogerFoto();
@@ -137,7 +137,7 @@ public class CrearCliente extends AppCompatActivity {
 
             imgStorage = uri.toString();
 
-            StorageReference fileReference = storage.getReference("imagenes_clientes").child(uri.getLastPathSegment());
+            StorageReference fileReference = storage.getReference("imagenes_trabajadores").child(uri.getLastPathSegment());
             fileReference.putFile(uri).continueWithTask(task -> {
 
                 if (!task.isSuccessful()) {
@@ -170,7 +170,7 @@ public class CrearCliente extends AppCompatActivity {
 
     private void putImage(Uri imageUri) {
 
-        Glide.with(getApplicationContext()).load(imageUri).into(ivCliente);
+        Glide.with(getApplicationContext()).load(imageUri).into(ivTrabajador);
 
     }
 
@@ -179,8 +179,8 @@ public class CrearCliente extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (imageUri != null) {
-                    Cliente c = new Cliente(nombreCliente.getText().toString(), dniCliente.getText().toString(), telefonoCliente.getText().toString(), emailCliente.getText().toString(), imageUri, postStorage);
-                    database.child("Clientes").child(c.getDni()).setValue(c);
+                    Trabajador c = new Trabajador(nombreTrabajador.getText().toString(), dniTrabajador.getText().toString(), telefonoTrabajador.getText().toString(), emailTrabajador.getText().toString(), imageUri, postStorage);
+                    database.child("Trabajadores").child(c.getDni()).setValue(c);
                 }
             }
 

@@ -1,4 +1,4 @@
-package com.example.businessmanagement.vistas.Cliente;
+package com.example.businessmanagement.vistas.Acreedor;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.businessmanagement.R;
+import com.example.businessmanagement.modelos.Acreedor;
 import com.example.businessmanagement.modelos.Cliente;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -28,33 +29,33 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.Objects;
 
-public class CrearCliente extends AppCompatActivity {
+public class CrearAcreedor extends AppCompatActivity {
 
     final int REQUEST_IMAGE_CAPTURE = 100;
 
-    private EditText nombreCliente, dniCliente, emailCliente, telefonoCliente;
+    private EditText nombreAcreedor, nifAcreedor, emailAcreedor, telefonoAcreedor;
     private Button crear;
-    private boolean clienteexiste = false;
+    private boolean acreedorexiste = false;
     DatabaseReference database;
     Uri imageUri, postStorage;
     String imgStorage;
-    private ImageView ivCliente;
+    private ImageView ivAcreedor;
 
     FirebaseStorage storage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_crear_cliente);
+        setContentView(R.layout.activity_crear_acreedor);
 
-        crear = findViewById(R.id.bCrearCliente);
+        crear = findViewById(R.id.bCrearAcreedor);
 
-        nombreCliente = findViewById(R.id.etnombreCliente);
-        dniCliente = findViewById(R.id.dniCliente);
-        emailCliente = findViewById(R.id.emailCliente);
-        telefonoCliente = findViewById(R.id.telefonoCliente);
+        nombreAcreedor = findViewById(R.id.etnombreAcreedor);
+        nifAcreedor = findViewById(R.id.nifAcreedor);
+        emailAcreedor = findViewById(R.id.emailAcreedor);
+        telefonoAcreedor = findViewById(R.id.telefonoAcreedor);
 
-        ivCliente = findViewById(R.id.imageView);
+        ivAcreedor = findViewById(R.id.imageView);
 
         storage = FirebaseStorage.getInstance();
 
@@ -67,23 +68,23 @@ public class CrearCliente extends AppCompatActivity {
         crear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                database.child("Clientes").addListenerForSingleValueEvent(new ValueEventListener() {
+                database.child("Acreedores").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        if(nombreCliente.getText().toString().isEmpty()||dniCliente.getText().toString().isEmpty()){
-                            Toast.makeText(getApplicationContext(), "El nombre y dni son campos obligatorios", Toast.LENGTH_LONG).show();
+                        if(nombreAcreedor.getText().toString().isEmpty()||nifAcreedor.getText().toString().isEmpty()){
+                            Toast.makeText(getApplicationContext(), "El nombre y nif son campos obligatorios", Toast.LENGTH_LONG).show();
                         }else{
                             if (imageUri != null) {
                                 for (DataSnapshot child : dataSnapshot.getChildren()) {
-                                    if (dniCliente.getText().toString().equals(child.child("dni").getValue().toString())) {
-                                        clienteexiste = true;
+                                    if (nifAcreedor.getText().toString().equals(child.child("nif").getValue().toString())) {
+                                        acreedorexiste = true;
                                         break;
                                     }
                                 }
-                                if (clienteexiste == false) {
-                                    crearComercio();
+                                if (acreedorexiste == false) {
+                                    crearAcreedor();
                                 } else {
-                                    Toast.makeText(getApplicationContext(), "Este cliente ya está registrado", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getApplicationContext(), "Este acreedor ya está registrado", Toast.LENGTH_LONG).show();
                                 }
                             } else {
                                 Toast.makeText(getApplicationContext(), "Tienes que introducir una imagen", Toast.LENGTH_LONG).show();
@@ -100,7 +101,7 @@ public class CrearCliente extends AppCompatActivity {
             }
         });
 
-        ivCliente.setOnClickListener(new View.OnClickListener() {
+        ivAcreedor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 escogerFoto();
@@ -137,7 +138,7 @@ public class CrearCliente extends AppCompatActivity {
 
             imgStorage = uri.toString();
 
-            StorageReference fileReference = storage.getReference("imagenes_clientes").child(uri.getLastPathSegment());
+            StorageReference fileReference = storage.getReference("imagenes_acreedores").child(uri.getLastPathSegment());
             fileReference.putFile(uri).continueWithTask(task -> {
 
                 if (!task.isSuccessful()) {
@@ -170,17 +171,17 @@ public class CrearCliente extends AppCompatActivity {
 
     private void putImage(Uri imageUri) {
 
-        Glide.with(getApplicationContext()).load(imageUri).into(ivCliente);
+        Glide.with(getApplicationContext()).load(imageUri).into(ivAcreedor);
 
     }
 
-    private void crearComercio() {
+    private void crearAcreedor() {
         database.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (imageUri != null) {
-                    Cliente c = new Cliente(nombreCliente.getText().toString(), dniCliente.getText().toString(), telefonoCliente.getText().toString(), emailCliente.getText().toString(), imageUri, postStorage);
-                    database.child("Clientes").child(c.getDni()).setValue(c);
+                    Acreedor a = new Acreedor(nombreAcreedor.getText().toString(), nifAcreedor.getText().toString(), telefonoAcreedor.getText().toString(), emailAcreedor.getText().toString(), imageUri, postStorage);
+                    database.child("Acreedores").child(a.getNif()).setValue(a);
                 }
             }
 

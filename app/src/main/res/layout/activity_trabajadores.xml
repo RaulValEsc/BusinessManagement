@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/darkModeBackground"
-    tools:context=".vistas.Cliente.ActivityClientes">
+    tools:context=".vistas.Trabajador.ActivityTrabajadores">
 
     <TextView
         android:id="@+id/textView5"
@@ -13,7 +13,7 @@
         android:layout_height="60dp"
         android:background="@color/colorPrimary"
         android:gravity="center_horizontal|center_vertical"
-        android:text="Clientes"
+        android:text="Trabajadores"
         android:textColor="@color/darkModeColor"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewClientes"
+        android:id="@+id/recyclerViewTrabajadores"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="60dp"
@@ -33,7 +33,7 @@
     </androidx.recyclerview.widget.RecyclerView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fbAñadirCliente"
+        android:id="@+id/fbAñadirTrabajador"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -48,7 +48,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerViewClientes"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerViewTrabajadores"
         app:srcCompat="@android:drawable/ic_menu_add" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

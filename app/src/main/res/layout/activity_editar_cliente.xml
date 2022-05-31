@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/darkModeBackground"
+    tools:context=".vistas.Cliente.EditarCliente">
+
+    <ImageView
+        android:id="@+id/ivCliente"
+        android:layout_width="219dp"
+        android:layout_height="219dp"
+        android:layout_marginTop="88dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_camera"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <Button
+        android:id="@+id/bModificar"
+        android:layout_width="273dp"
+        android:layout_height="54dp"
+        android:layout_marginTop="592dp"
+        android:background="@color/colorPrimary"
+        android:text="Modificar"
+        android:textColor="@color/darkModeColor"
+        app:layout_constraintEnd_toEndOf="@+id/ivCliente"
+        app:layout_constraintStart_toStartOf="@+id/ivCliente"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/tvEditarNombre"
+        android:layout_width="219dp"
+        android:textColor="@color/darkModeColor"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="340dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Name"
+        app:layout_constraintEnd_toEndOf="@+id/ivCliente"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/ivCliente"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/tvEditarDNI"
+        android:layout_width="219dp"
+        android:textColor="@color/darkModeColor"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="DNI"
+        app:layout_constraintEnd_toEndOf="@+id/ivCliente"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/ivCliente"
+        app:layout_constraintTop_toBottomOf="@+id/tvEditarNombre" />
+
+    <EditText
+        android:id="@+id/tvEditarEmail"
+        android:layout_width="219dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:textColor="@color/darkModeColor"
+        android:inputType="textEmailAddress"
+        android:text="Email"
+        app:layout_constraintEnd_toEndOf="@+id/ivCliente"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/ivCliente"
+        app:layout_constraintTop_toBottomOf="@+id/tvEditarDNI" />
+
+    <EditText
+        android:id="@+id/tvEditarTelefono"
+        android:layout_width="219dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:inputType="phone"
+        android:textColor="@color/darkModeColor"
+        android:text="Telefono"
+        app:layout_constraintEnd_toEndOf="@+id/ivCliente"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/ivCliente"
+        app:layout_constraintTop_toBottomOf="@+id/tvEditarEmail" />
+</androidx.constraintlayout.widget.ConstraintLayout>

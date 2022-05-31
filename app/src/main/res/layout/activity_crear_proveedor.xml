@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".vistas.Proveedor.CrearProveedor">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/darkModeBackground"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="227dp"
+            android:layout_marginTop="20dp"
+            app:srcCompat="@android:drawable/ic_menu_camera"
+            tools:srcCompat="@tools:sample/avatars" />
+
+        <EditText
+            android:id="@+id/etnombreProveedor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="35dp"
+            android:layout_marginRight="50dp"
+            android:ems="10"
+            android:hint="Nombre"
+            android:inputType="textPersonName"
+            android:textColor="@color/darkModeColor"
+            android:textColorHighlight="@color/darkModeColor"
+            android:textColorHint="@color/darkModeColor" />
+
+        <EditText
+            android:id="@+id/nifProveedor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginRight="50dp"
+            android:ems="10"
+            android:hint="NIF"
+            android:inputType="textPersonName"
+            android:textColor="@color/darkModeColor"
+            android:textColorHighlight="@color/darkModeColor"
+            android:textColorHint="@color/darkModeColor" />
+
+        <EditText
+            android:id="@+id/emailProveedor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginRight="50dp"
+            android:ems="10"
+            android:hint="Email"
+            android:inputType="textEmailAddress"
+            android:textColor="@color/darkModeColor"
+            android:textColorHighlight="@color/darkModeColor"
+            android:textColorHint="@color/darkModeColor" />
+
+        <EditText
+            android:id="@+id/telefonoProveedor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginRight="50dp"
+            android:ems="10"
+            android:hint="Número de Teléfono"
+            android:inputType="phone"
+            android:textColor="@color/darkModeColor"
+            android:textColorHighlight="@color/darkModeColor"
+            android:textColorHint="@color/darkModeColor" />
+
+        <Button
+            android:id="@+id/bCrearProveedor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="100dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginRight="100dp"
+            android:background="@color/colorPrimaryDark"
+            android:text="Crear"
+            android:textColor="@color/darkModeColor"
+            android:textColorHighlight="@color/darkModeColor"
+            android:textColorHint="@color/darkModeColor" />
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

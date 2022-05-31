@@ -1,4 +1,4 @@
-package com.example.businessmanagement.vistas.Cliente;
+package com.example.businessmanagement.vistas.Proveedor;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -17,7 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.businessmanagement.R;
-import com.example.businessmanagement.modelos.Cliente;
+import com.example.businessmanagement.modelos.Proveedor;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -28,33 +28,33 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.Objects;
 
-public class CrearCliente extends AppCompatActivity {
+public class CrearProveedor extends AppCompatActivity {
 
     final int REQUEST_IMAGE_CAPTURE = 100;
 
-    private EditText nombreCliente, dniCliente, emailCliente, telefonoCliente;
+    private EditText nombreProveedor, nifProveedor, emailProveedor, telefonoProveedor;
     private Button crear;
-    private boolean clienteexiste = false;
+    private boolean proveedorexiste = false;
     DatabaseReference database;
     Uri imageUri, postStorage;
     String imgStorage;
-    private ImageView ivCliente;
+    private ImageView ivProveedor;
 
     FirebaseStorage storage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_crear_cliente);
+        setContentView(R.layout.activity_crear_proveedor);
 
-        crear = findViewById(R.id.bCrearCliente);
+        crear = findViewById(R.id.bCrearProveedor);
 
-        nombreCliente = findViewById(R.id.etnombreCliente);
-        dniCliente = findViewById(R.id.dniCliente);
-        emailCliente = findViewById(R.id.emailCliente);
-        telefonoCliente = findViewById(R.id.telefonoCliente);
+        nombreProveedor = findViewById(R.id.etnombreProveedor);
+        nifProveedor = findViewById(R.id.nifProveedor);
+        emailProveedor = findViewById(R.id.emailProveedor);
+        telefonoProveedor = findViewById(R.id.telefonoProveedor);
 
-        ivCliente = findViewById(R.id.imageView);
+        ivProveedor = findViewById(R.id.imageView);
 
         storage = FirebaseStorage.getInstance();
 
@@ -67,23 +67,23 @@ public class CrearCliente extends AppCompatActivity {
         crear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                database.child("Clientes").addListenerForSingleValueEvent(new ValueEventListener() {
+                database.child("Proveedores").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        if(nombreCliente.getText().toString().isEmpty()||dniCliente.getText().toString().isEmpty()){
-                            Toast.makeText(getApplicationContext(), "El nombre y dni son campos obligatorios", Toast.LENGTH_LONG).show();
+                        if(nombreProveedor.getText().toString().isEmpty()||nifProveedor.getText().toString().isEmpty()){
+                            Toast.makeText(getApplicationContext(), "El nombre y nif son campos obligatorios", Toast.LENGTH_LONG).show();
                         }else{
                             if (imageUri != null) {
                                 for (DataSnapshot child : dataSnapshot.getChildren()) {
-                                    if (dniCliente.getText().toString().equals(child.child("dni").getValue().toString())) {
-                                        clienteexiste = true;
+                                    if (nifProveedor.getText().toString().equals(child.child("nif").getValue().toString())) {
+                                        proveedorexiste = true;
                                         break;
                                     }
                                 }
-                                if (clienteexiste == false) {
-                                    crearComercio();
+                                if (proveedorexiste == false) {
+                                    crearProveedor();
                                 } else {
-                                    Toast.makeText(getApplicationContext(), "Este cliente ya está registrado", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getApplicationContext(), "Este proveedor ya está registrado", Toast.LENGTH_LONG).show();
                                 }
                             } else {
                                 Toast.makeText(getApplicationContext(), "Tienes que introducir una imagen", Toast.LENGTH_LONG).show();
@@ -100,7 +100,7 @@ public class CrearCliente extends AppCompatActivity {
             }
         });
 
-        ivCliente.setOnClickListener(new View.OnClickListener() {
+        ivProveedor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 escogerFoto();
@@ -137,7 +137,7 @@ public class CrearCliente extends AppCompatActivity {
 
             imgStorage = uri.toString();
 
-            StorageReference fileReference = storage.getReference("imagenes_clientes").child(uri.getLastPathSegment());
+            StorageReference fileReference = storage.getReference("imagenes_proveedores").child(uri.getLastPathSegment());
             fileReference.putFile(uri).continueWithTask(task -> {
 
                 if (!task.isSuccessful()) {
@@ -170,17 +170,17 @@ public class CrearCliente extends AppCompatActivity {
 
     private void putImage(Uri imageUri) {
 
-        Glide.with(getApplicationContext()).load(imageUri).into(ivCliente);
+        Glide.with(getApplicationContext()).load(imageUri).into(ivProveedor);
 
     }
 
-    private void crearComercio() {
+    private void crearProveedor() {
         database.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (imageUri != null) {
-                    Cliente c = new Cliente(nombreCliente.getText().toString(), dniCliente.getText().toString(), telefonoCliente.getText().toString(), emailCliente.getText().toString(), imageUri, postStorage);
-                    database.child("Clientes").child(c.getDni()).setValue(c);
+                    Proveedor a = new Proveedor(nombreProveedor.getText().toString(), nifProveedor.getText().toString(), telefonoProveedor.getText().toString(), emailProveedor.getText().toString(), imageUri, postStorage);
+                    database.child("Proveedores").child(a.getNif()).setValue(a);
                 }
             }
 
@@ -193,3 +193,4 @@ public class CrearCliente extends AppCompatActivity {
         onBackPressed();
     }
 }
+

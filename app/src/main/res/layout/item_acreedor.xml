@@ -13,15 +13,15 @@
         android:layout_marginLeft="35dp"
         android:layout_marginTop="36dp"
         android:text="eqweq"
-        android:textColor="@color/darkModeColor"
         android:textSize="24sp"
+        android:textColor="@color/darkModeColor"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.909"
-        app:layout_constraintStart_toEndOf="@+id/ivItemCliente"
+        app:layout_constraintStart_toEndOf="@+id/ivItemAcreedor"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/ivItemCliente"
+        android:id="@+id/ivItemAcreedor"
         android:layout_width="99dp"
         android:layout_height="99dp"
         android:layout_marginStart="16dp"

@@ -1,4 +1,4 @@
-package com.example.businessmanagement.vistas.Cliente;
+package com.example.businessmanagement.vistas.Trabajador;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,63 +13,64 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
 import com.example.businessmanagement.R;
-import com.example.businessmanagement.modelos.Cliente;
+import com.example.businessmanagement.modelos.Trabajador;
+import com.example.businessmanagement.vistas.Trabajador.EditarTrabajador;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class VistaCliente extends AppCompatActivity {
+public class VistaTrabajador extends AppCompatActivity {
 
     DatabaseReference database;
 
-    public static Cliente cliente;
+    public static Trabajador trabajador;
 
     public static String dni;
 
     Bundle b;
 
-    Toolbar tbCliente;
+    Toolbar tbTrabajador;
     public static TextView tvNombre,tvDni,tvEmail,tvTelefono;
     ImageView ivComercio;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_vista_cliente);
+        setContentView(R.layout.activity_vista_trabajador);
 
         b = getIntent().getExtras();
         dni = b.getString("dni");
 
-        tvNombre = findViewById(R.id.tvNombreCliente);
+        tvNombre = findViewById(R.id.tvNombreTrabajador);
         tvDni = findViewById(R.id.tvDni);
         tvEmail = findViewById(R.id.tvEmail);
         tvTelefono = findViewById(R.id.tvTelefono);
 
-        ivComercio = findViewById(R.id.ivCliente);
-        tbCliente = findViewById(R.id.tbCliente);
+        ivComercio = findViewById(R.id.ivTrabajador);
+        tbTrabajador = findViewById(R.id.tbTrabajador);
 
-        cargarCliente();
+        cargarTrabajador();
 
-        setSupportActionBar(tbCliente);
-        getSupportActionBar().setTitle(cliente.getNombre());
+        setSupportActionBar(tbTrabajador);
+        getSupportActionBar().setTitle(trabajador.getNombre());
     }
 
-    private void cargarCliente() {
-        database = FirebaseDatabase.getInstance().getReference().child("Clientes");
+    private void cargarTrabajador() {
+        database = FirebaseDatabase.getInstance().getReference().child("Trabajadores");
         database.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot child : snapshot.getChildren()){
                     if(child.child("dni").getValue().toString().equals(dni)){
-                        cliente = child.getValue(Cliente.class);
+                        trabajador = child.getValue(Trabajador.class);
 
-                        Glide.with(getApplicationContext()).load(cliente.getImageUri()).into(ivComercio);
-                        tvNombre.setText(cliente.getNombre());
-                        tvDni.setText(cliente.getDni());
-                        tvEmail.setText(cliente.getEmail());
-                        tvTelefono.setText(cliente.getTelefono());
+                        Glide.with(getApplicationContext()).load(trabajador.getImageUri()).into(ivComercio);
+                        tvNombre.setText(trabajador.getNombre());
+                        tvDni.setText(trabajador.getDni());
+                        tvEmail.setText(trabajador.getEmail());
+                        tvTelefono.setText(trabajador.getTelefono());
                     }
                 }
             }
@@ -83,7 +84,7 @@ public class VistaCliente extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_clientes,menu);
+        getMenuInflater().inflate(R.menu.menu_trabajadores,menu);
         return true;
     }
 
@@ -92,14 +93,14 @@ public class VistaCliente extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.menuEditar) {
 
-            Intent intent = new Intent(getApplicationContext(), EditarCliente.class);
-            intent.putExtra("dni",cliente.getDni());
+            Intent intent = new Intent(getApplicationContext(), EditarTrabajador.class);
+            intent.putExtra("dni",trabajador.getDni());
             startActivity(intent);
 
         } else if (id == R.id.menuBorrar) {
 
-            EditarCliente.aux=true;
-            database = FirebaseDatabase.getInstance().getReference().child("Clientes").child(cliente.getDni());
+            EditarTrabajador.aux=true;
+            database = FirebaseDatabase.getInstance().getReference().child("Trabajadores").child(trabajador.getDni());
             database.removeValue();
             finish();
 

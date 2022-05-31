@@ -5,7 +5,6 @@ import android.os.Bundle;
 
 import com.example.businessmanagement.controladores.ClienteAdapter;
 import com.example.businessmanagement.modelos.Cliente;
-import com.example.businessmanagement.vistas.Comercio.CrearComercio;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.annotation.NonNull;
@@ -41,7 +40,7 @@ public class ActivityClientes extends AppCompatActivity {
 
         database= FirebaseDatabase.getInstance().getReference();
 
-        fbAñadir = findViewById(R.id.fbAñadir);
+        fbAñadir = findViewById(R.id.fbAñadirCliente);
         rvClientes = findViewById(R.id.recyclerViewClientes);
 
         cargarClientes();

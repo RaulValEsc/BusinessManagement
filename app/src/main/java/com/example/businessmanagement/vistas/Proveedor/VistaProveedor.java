@@ -1,4 +1,4 @@
-package com.example.businessmanagement.vistas.Cliente;
+package com.example.businessmanagement.vistas.Proveedor;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,63 +13,63 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
 import com.example.businessmanagement.R;
-import com.example.businessmanagement.modelos.Cliente;
+import com.example.businessmanagement.modelos.Proveedor;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class VistaCliente extends AppCompatActivity {
+public class VistaProveedor extends AppCompatActivity {
 
     DatabaseReference database;
 
-    public static Cliente cliente;
+    public static Proveedor proveedor;
 
-    public static String dni;
+    public static String nif;
 
     Bundle b;
 
-    Toolbar tbCliente;
-    public static TextView tvNombre,tvDni,tvEmail,tvTelefono;
-    ImageView ivComercio;
+    Toolbar tbProveedor;
+    public static TextView tvNombre, tvNif,tvEmail,tvTelefono;
+    ImageView ivProveedor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_vista_cliente);
+        setContentView(R.layout.activity_vista_proveedor);
 
         b = getIntent().getExtras();
-        dni = b.getString("dni");
+        nif = b.getString("nif");
 
-        tvNombre = findViewById(R.id.tvNombreCliente);
-        tvDni = findViewById(R.id.tvDni);
+        tvNombre = findViewById(R.id.tvNombreProveedor);
+        tvNif = findViewById(R.id.tvNif);
         tvEmail = findViewById(R.id.tvEmail);
         tvTelefono = findViewById(R.id.tvTelefono);
 
-        ivComercio = findViewById(R.id.ivCliente);
-        tbCliente = findViewById(R.id.tbCliente);
+        ivProveedor = findViewById(R.id.ivProveedor);
+        tbProveedor = findViewById(R.id.tbProveedor);
 
         cargarCliente();
 
-        setSupportActionBar(tbCliente);
-        getSupportActionBar().setTitle(cliente.getNombre());
+        setSupportActionBar(tbProveedor);
+        getSupportActionBar().setTitle(proveedor.getNombre());
     }
 
     private void cargarCliente() {
-        database = FirebaseDatabase.getInstance().getReference().child("Clientes");
+        database = FirebaseDatabase.getInstance().getReference().child("Proveedores");
         database.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot child : snapshot.getChildren()){
-                    if(child.child("dni").getValue().toString().equals(dni)){
-                        cliente = child.getValue(Cliente.class);
+                    if(child.child("nif").getValue().toString().equals(nif)){
+                        proveedor = child.getValue(Proveedor.class);
 
-                        Glide.with(getApplicationContext()).load(cliente.getImageUri()).into(ivComercio);
-                        tvNombre.setText(cliente.getNombre());
-                        tvDni.setText(cliente.getDni());
-                        tvEmail.setText(cliente.getEmail());
-                        tvTelefono.setText(cliente.getTelefono());
+                        Glide.with(getApplicationContext()).load(proveedor.getImageUri()).into(ivProveedor);
+                        tvNombre.setText(proveedor.getNombre());
+                        tvNif.setText(proveedor.getNif());
+                        tvEmail.setText(proveedor.getEmail());
+                        tvTelefono.setText(proveedor.getTelefono());
                     }
                 }
             }
@@ -83,7 +83,7 @@ public class VistaCliente extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_clientes,menu);
+        getMenuInflater().inflate(R.menu.menu_proveedores,menu);
         return true;
     }
 
@@ -92,14 +92,14 @@ public class VistaCliente extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.menuEditar) {
 
-            Intent intent = new Intent(getApplicationContext(), EditarCliente.class);
-            intent.putExtra("dni",cliente.getDni());
+            Intent intent = new Intent(getApplicationContext(), EditarProveedor.class);
+            intent.putExtra("nif", proveedor.getNif());
             startActivity(intent);
 
         } else if (id == R.id.menuBorrar) {
 
-            EditarCliente.aux=true;
-            database = FirebaseDatabase.getInstance().getReference().child("Clientes").child(cliente.getDni());
+            EditarProveedor.aux=true;
+            database = FirebaseDatabase.getInstance().getReference().child("Proveedores").child(proveedor.getNif());
             database.removeValue();
             finish();
 

@@ -45,7 +45,7 @@ public class ClienteAdapter extends RecyclerView.Adapter<ClienteAdapter.ClienteV
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(c, VistaCliente.class);
-                intent.putExtra("nombre_cliente",holder.nombre.getText().toString());
+                intent.putExtra("dni",holder.dni);
                 c.startActivity(intent);
             }
         });
@@ -64,6 +64,7 @@ public class ClienteAdapter extends RecyclerView.Adapter<ClienteAdapter.ClienteV
 
     public class ClienteViewHolder extends RecyclerView.ViewHolder {
 
+        String dni;
         TextView nombre;
         ImageView ivItemCliente;
 
@@ -80,6 +81,8 @@ public class ClienteAdapter extends RecyclerView.Adapter<ClienteAdapter.ClienteV
             Glide.with(itemView.getContext()).load(cliente.getImageUri()).into(ivItemCliente);
 
             nombre.setText(cliente.getNombre());
+
+            dni = cliente.getDni();
 
         }
     }

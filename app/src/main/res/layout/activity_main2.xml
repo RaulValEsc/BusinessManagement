@@ -143,6 +143,11 @@
                 android:background="@color/colorPrimaryDark"
                 android:text="Compras" />
 
+            <Space
+                android:layout_width="10dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
             <Button
                 android:id="@+id/bVentas"
                 style="@style/Widget.AppCompat.Button"
