@@ -6,9 +6,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -32,13 +34,18 @@ public class CrearProducto extends AppCompatActivity {
 
     final int REQUEST_IMAGE_CAPTURE = 100;
 
-    private EditText nombreProducto, codigoProducto, emailProducto, telefonoProducto;
+    private EditText nombreProducto, codigoProducto, precioProducto;
     private Button crear;
     private boolean productoexiste = false;
     DatabaseReference database;
     Uri imageUri, postStorage;
     String imgStorage;
+
+    String codigoProveedor;
+
     private ImageView ivProducto;
+
+    Spinner pickerProveedores;
 
     FirebaseStorage storage;
 
@@ -51,8 +58,9 @@ public class CrearProducto extends AppCompatActivity {
 
         nombreProducto = findViewById(R.id.etnombreProducto);
         codigoProducto = findViewById(R.id.codigoProducto);
-        emailProducto = findViewById(R.id.emailProducto);
-        telefonoProducto = findViewById(R.id.telefonoProducto);
+        precioProducto = findViewById(R.id.precioProducto);
+
+        pickerProveedores = findViewById(R.id.pickProveedor);
 
         ivProducto = findViewById(R.id.imageView);
 
@@ -105,6 +113,10 @@ public class CrearProducto extends AppCompatActivity {
             public void onClick(View v) {
                 escogerFoto();
             }
+        });
+
+        pickerProveedores.setOnItemClickListener((parent, view, position, id) -> {
+
         });
     }
 
@@ -179,7 +191,7 @@ public class CrearProducto extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (imageUri != null) {
-                    Producto c = new Producto(nombreProducto.getText().toString(), codigoProducto.getText().toString(), telefonoProducto.getText().toString(), emailProducto.getText().toString(), imageUri, postStorage);
+                    Producto c = new Producto(nombreProducto.getText().toString(), codigoProducto.getText().toString(), telefonoProducto.getText().toString(), precioProducto.getText().toString(), imageUri, postStorage);
                     database.child("Productos").child(c.getCodigo()).setValue(c);
                 }
             }
@@ -191,6 +203,13 @@ public class CrearProducto extends AppCompatActivity {
         });
 
         onBackPressed();
+    }
+
+
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 }
 
