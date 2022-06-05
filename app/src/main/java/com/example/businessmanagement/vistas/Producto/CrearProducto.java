@@ -19,7 +19,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.businessmanagement.R;
+import com.example.businessmanagement.controladores.SpinnerProveedoresAdapter;
 import com.example.businessmanagement.modelos.Producto;
+import com.example.businessmanagement.modelos.Proveedor;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -28,13 +30,14 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class CrearProducto extends AppCompatActivity {
 
     final int REQUEST_IMAGE_CAPTURE = 100;
 
-    private EditText nombreProducto, codigoProducto, precioProducto;
+    private EditText nombreProducto, codigoProducto, precioProducto,stockProducto;
     private Button crear;
     private boolean productoexiste = false;
     DatabaseReference database;
@@ -46,6 +49,9 @@ public class CrearProducto extends AppCompatActivity {
     private ImageView ivProducto;
 
     Spinner pickerProveedores;
+    SpinnerProveedoresAdapter spinnerAdapter;
+
+    ArrayList<Proveedor> proveedores = new ArrayList<Proveedor>();
 
     FirebaseStorage storage;
 
@@ -59,8 +65,7 @@ public class CrearProducto extends AppCompatActivity {
         nombreProducto = findViewById(R.id.etnombreProducto);
         codigoProducto = findViewById(R.id.codigoProducto);
         precioProducto = findViewById(R.id.precioProducto);
-
-        pickerProveedores = findViewById(R.id.pickProveedor);
+        stockProducto = findViewById(R.id.stockProducto);
 
         ivProducto = findViewById(R.id.imageView);
 
@@ -68,7 +73,48 @@ public class CrearProducto extends AppCompatActivity {
 
         database = FirebaseDatabase.getInstance().getReference();
 
+        cargarSpinnerProveedores();
+
         setup();
+    }
+
+    private void cargarSpinnerProveedores() {
+
+        database.child("Proveedores").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    proveedores.add((Proveedor) child.getValue());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        Proveedor[] proveedoresList = (Proveedor[]) proveedores.toArray();
+
+        spinnerAdapter = new SpinnerProveedoresAdapter(this.getApplicationContext(), android.R.layout.simple_spinner_item, proveedoresList);
+
+        pickerProveedores = findViewById(R.id.pickProveedor);
+
+        pickerProveedores.setAdapter(spinnerAdapter);
+
+        pickerProveedores.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view,
+                                       int position, long id) {
+
+                Proveedor proveedor = spinnerAdapter.getItem(position);
+
+                codigoProveedor = proveedor.getNif();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapter) {  };
+        });
     }
 
     private void setup() {
@@ -89,7 +135,7 @@ public class CrearProducto extends AppCompatActivity {
                                     }
                                 }
                                 if (productoexiste == false) {
-                                    crearComercio();
+                                    crearProducto();
                                 } else {
                                     Toast.makeText(getApplicationContext(), "Este producto ya está registrado", Toast.LENGTH_LONG).show();
                                 }
@@ -115,9 +161,7 @@ public class CrearProducto extends AppCompatActivity {
             }
         });
 
-        pickerProveedores.setOnItemClickListener((parent, view, position, id) -> {
 
-        });
     }
 
     private void escogerFoto() {
@@ -186,12 +230,12 @@ public class CrearProducto extends AppCompatActivity {
 
     }
 
-    private void crearComercio() {
+    private void crearProducto() {
         database.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (imageUri != null) {
-                    Producto c = new Producto(nombreProducto.getText().toString(), codigoProducto.getText().toString(), telefonoProducto.getText().toString(), precioProducto.getText().toString(), imageUri, postStorage);
+                    Producto c = new Producto(nombreProducto.getText().toString(), codigoProducto.getText().toString(), codigoProveedor, Integer.parseInt(precioProducto.getText().toString()), Integer.parseInt(stockProducto.getText().toString()), imageUri, postStorage);
                     database.child("Productos").child(c.getCodigo()).setValue(c);
                 }
             }
@@ -203,13 +247,6 @@ public class CrearProducto extends AppCompatActivity {
         });
 
         onBackPressed();
-    }
-
-
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
     }
 }
 

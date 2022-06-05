@@ -10,10 +10,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.businessmanagement.R;
 import com.example.businessmanagement.vistas.Acreedor.ActivityAcreedores;
 import com.example.businessmanagement.vistas.Cliente.ActivityClientes;
-import com.example.businessmanagement.vistas.Comercio.ActivityComercios;
+import com.example.businessmanagement.vistas.Producto.ActivityProductos;
 import com.example.businessmanagement.vistas.Proveedor.ActivityProveedores;
 import com.example.businessmanagement.vistas.Trabajador.ActivityTrabajadores;
-import com.example.businessmanagement.vistas.Usuario.ActivityUsuarios;
 
 public class Main extends AppCompatActivity {
 
@@ -68,26 +67,26 @@ public class Main extends AppCompatActivity {
             }
         });
 
-        bCompras.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ActivityUsuarios.class);
-                startActivity(intent);
-            }
-        });
+//        bCompras.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(getApplicationContext(), ActivityUsuarios.class);
+//                startActivity(intent);
+//            }
+//        });
 
-        bVentas.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ActivityUsuarios.class);
-                startActivity(intent);
-            }
-        });
+//        bVentas.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(getApplicationContext(), ActivityUsuarios.class);
+//                startActivity(intent);
+//            }
+//        });
 
         bProductos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ActivityUsuarios.class);
+                Intent intent = new Intent(getApplicationContext(), ActivityProductos.class);
                 startActivity(intent);
             }
         });
