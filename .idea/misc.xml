@@ -4,6 +4,10 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Projects/BusinessManagement/app/src/main/res/layout/activity_crear_cliente.xml" value="0.3625" />
+        <entry key="..\:/Projects/BusinessManagement/app/src/main/res/layout/activity_crear_producto.xml" value="0.3625" />
+        <entry key="..\:/Projects/BusinessManagement/app/src/main/res/layout/activity_editar_producto.xml" value="0.5" />
+        <entry key="..\:/Projects/BusinessManagement/app/src/main/res/layout/activity_vista_cliente.xml" value="0.3625" />
+        <entry key="..\:/Projects/BusinessManagement/app/src/main/res/layout/activity_vista_proveedor.xml" value="0.3625" />
         <entry key="..\:/Projects/DAMProjects/BusinessManagement/app/src/main/res/layout/activity_crear_producto.xml" value="0.33" />
         <entry key="..\:/Projects/DAMProjects/BusinessManagement/app/src/main/res/layout/spinner_item.xml" value="0.36666666666666664" />
       </map>

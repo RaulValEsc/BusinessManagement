@@ -11,7 +11,7 @@
         android:id="@+id/ivProducto"
         android:layout_width="219dp"
         android:layout_height="219dp"
-        android:layout_marginTop="88dp"
+        android:layout_marginTop="52dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -22,7 +22,7 @@
         android:id="@+id/bModificar"
         android:layout_width="273dp"
         android:layout_height="54dp"
-        android:layout_marginTop="592dp"
+        android:layout_marginTop="620dp"
         android:background="@color/colorPrimary"
         android:text="Modificar"
         android:textColor="@color/darkModeColor"
@@ -33,56 +33,65 @@
     <EditText
         android:id="@+id/tvEditarNombre"
         android:layout_width="219dp"
-        android:textColor="@color/darkModeColor"
         android:layout_height="wrap_content"
-        android:layout_marginTop="340dp"
+        android:layout_marginTop="304dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="Name"
+        android:textColor="@color/darkModeColor"
         app:layout_constraintEnd_toEndOf="@+id/ivProducto"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/ivProducto"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/tvEditarDNI"
+        android:id="@+id/tvEditarNIF"
         android:layout_width="219dp"
         android:textColor="@color/darkModeColor"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="DNI"
+        android:text="NIF"
         app:layout_constraintEnd_toEndOf="@+id/ivProducto"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/ivProducto"
         app:layout_constraintTop_toBottomOf="@+id/tvEditarNombre" />
 
     <EditText
-        android:id="@+id/tvEditarEmail"
+        android:id="@+id/tvEditarPrecio"
         android:layout_width="219dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:ems="10"
         android:textColor="@color/darkModeColor"
-        android:inputType="textEmailAddress"
-        android:text="Email"
+        android:inputType="numberDecimal"
+        android:text="Precio"
         app:layout_constraintEnd_toEndOf="@+id/ivProducto"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/ivProducto"
-        app:layout_constraintTop_toBottomOf="@+id/tvEditarDNI" />
+        app:layout_constraintTop_toBottomOf="@+id/tvEditarNIF" />
 
     <EditText
-        android:id="@+id/tvEditarTelefono"
+        android:id="@+id/tvEditarStock"
         android:layout_width="219dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:ems="10"
-        android:inputType="phone"
+        android:inputType="number"
         android:textColor="@color/darkModeColor"
-        android:text="Telefono"
+        android:text="Stock"
         app:layout_constraintEnd_toEndOf="@+id/ivProducto"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/ivProducto"
-        app:layout_constraintTop_toBottomOf="@+id/tvEditarEmail" />
+        app:layout_constraintTop_toBottomOf="@+id/tvEditarPrecio" />
+
+    <Spinner
+        android:id="@+id/pickProveedor"
+        android:layout_width="219dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvEditarStock" />
 </androidx.constraintlayout.widget.ConstraintLayout>

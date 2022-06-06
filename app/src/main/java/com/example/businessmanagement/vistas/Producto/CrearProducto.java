@@ -44,10 +44,9 @@ public class CrearProducto extends AppCompatActivity {
     Uri imageUri, postStorage;
     String imgStorage;
 
-    String codigoProveedor;
-
     private ImageView ivProducto;
 
+    String codigoProveedor;
     Spinner pickerProveedores;
     SpinnerProveedoresAdapter spinnerAdapter;
 
@@ -124,8 +123,8 @@ public class CrearProducto extends AppCompatActivity {
                 database.child("Productos").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        if(nombreProducto.getText().toString().isEmpty()||codigoProducto.getText().toString().isEmpty()){
-                            Toast.makeText(getApplicationContext(), "El nombre y codigo son campos obligatorios", Toast.LENGTH_LONG).show();
+                        if(nombreProducto.getText().toString().isEmpty()||codigoProducto.getText().toString().isEmpty()||codigoProveedor.isEmpty()){
+                            Toast.makeText(getApplicationContext(), "El nombre ,codigo y proveedor son campos obligatorios", Toast.LENGTH_LONG).show();
                         }else{
                             if (imageUri != null) {
                                 for (DataSnapshot child : dataSnapshot.getChildren()) {

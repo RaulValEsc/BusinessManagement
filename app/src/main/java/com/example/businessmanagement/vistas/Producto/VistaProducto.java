@@ -32,7 +32,7 @@ public class VistaProducto extends AppCompatActivity {
     Bundle b;
 
     Toolbar tbProducto;
-    public static TextView tvNombre,tvCodigo,tvEmail,tvTelefono;
+    public static TextView tvNombre,tvCodigo,tvPrecio,tvStock;
     ImageView ivComercio;
 
     @Override
@@ -45,8 +45,8 @@ public class VistaProducto extends AppCompatActivity {
 
         tvNombre = findViewById(R.id.tvNombreProducto);
         tvCodigo = findViewById(R.id.tvCodigo);
-        tvEmail = findViewById(R.id.tvEmail);
-        tvTelefono = findViewById(R.id.tvTelefono);
+        tvPrecio = findViewById(R.id.tvPrecio);
+        tvStock = findViewById(R.id.tvStock);
 
         ivComercio = findViewById(R.id.ivProducto);
         tbProducto = findViewById(R.id.tbProducto);
@@ -69,8 +69,8 @@ public class VistaProducto extends AppCompatActivity {
                         Glide.with(getApplicationContext()).load(producto.getImageUri()).into(ivComercio);
                         tvNombre.setText(producto.getNombre());
                         tvCodigo.setText(producto.getCodigo());
-                        tvEmail.setText(producto.getEmail());
-                        tvTelefono.setText(producto.getTelefono());
+                        tvPrecio.setText("Precio: "+producto.getPrecio());
+                        tvStock.setText("Stock: "+producto.getStock());
                     }
                 }
             }

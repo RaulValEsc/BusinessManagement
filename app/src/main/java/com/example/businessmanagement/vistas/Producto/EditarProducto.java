@@ -6,9 +6,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -17,8 +19,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.businessmanagement.R;
+import com.example.businessmanagement.controladores.SpinnerProveedoresAdapter;
 import com.example.businessmanagement.modelos.Producto;
-import com.example.businessmanagement.vistas.Producto.VistaProducto;
+import com.example.businessmanagement.modelos.Proveedor;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -27,6 +30,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class EditarProducto extends AppCompatActivity {
@@ -36,7 +40,7 @@ public class EditarProducto extends AppCompatActivity {
     FirebaseStorage storage;
 
     ImageView ivProducto;
-    EditText etNombre, etCodigo, etEmail, etTelefono;
+    EditText etNombre, etCodigo, etPrecio, etStock;
     Button bEditar;
 
     boolean productoexiste = false, editado = false;
@@ -46,6 +50,12 @@ public class EditarProducto extends AppCompatActivity {
     String codigo,imgStorage;
 
     Uri imageUri, postStorage;
+
+    String codigoProveedor;
+    Spinner pickerProveedores;
+    SpinnerProveedoresAdapter spinnerAdapter;
+
+    ArrayList<Proveedor> proveedores = new ArrayList<Proveedor>();
 
     DatabaseReference database;
 
@@ -67,19 +77,60 @@ public class EditarProducto extends AppCompatActivity {
 
         etCodigo = findViewById(R.id.tvEditarDNI);
         etNombre = findViewById(R.id.tvEditarNombre);
-        etEmail = findViewById(R.id.tvEditarEmail);
-        etTelefono = findViewById(R.id.tvEditarTelefono);
+        etPrecio = findViewById(R.id.tvEditarPrecio);
+        etStock = findViewById(R.id.tvEditarStock);
 
         bEditar = findViewById(R.id.bModificar);
 
         codigo = b.getString("codigo");
 
-        cargarComercio();
+        cargarProducto();
+
+        cargarSpinnerProveedores();
 
         setup();
     }
 
-    private void cargarComercio() {
+    private void cargarSpinnerProveedores() {
+
+        database.child("Proveedores").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    proveedores.add((Proveedor) child.getValue());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        Proveedor[] proveedoresList = (Proveedor[]) proveedores.toArray();
+
+        spinnerAdapter = new SpinnerProveedoresAdapter(this.getApplicationContext(), android.R.layout.simple_spinner_item, proveedoresList);
+
+        pickerProveedores = findViewById(R.id.pickProveedor);
+
+        pickerProveedores.setAdapter(spinnerAdapter);
+
+        pickerProveedores.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view,
+                                       int position, long id) {
+
+                Proveedor proveedor = spinnerAdapter.getItem(position);
+
+                codigoProveedor = proveedor.getNif();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapter) {  };
+        });
+    }
+
+    private void cargarProducto() {
         database = FirebaseDatabase.getInstance().getReference().child("Productos");
         database.addValueEventListener(new ValueEventListener() {
             @Override
@@ -91,8 +142,8 @@ public class EditarProducto extends AppCompatActivity {
                         Glide.with(getApplicationContext()).load(c.getImageUri()).into(ivProducto);
                         etNombre.setText(c.getNombre());
                         etCodigo.setText(c.getCodigo());
-                        etTelefono.setText(c.getTelefono());
-                        etEmail.setText(c.getEmail());
+                        etStock.setText(c.getStock());
+                        etPrecio.setText(c.getPrecio());
                     } else {
                         for (DataSnapshot child : snapshot.getChildren()) {
                             if (etCodigo.getText().toString().equals(child.child("codigo").getValue().toString())) {
@@ -106,14 +157,14 @@ public class EditarProducto extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "Producto Modificado Correctamente", Toast.LENGTH_LONG).show();
                             VistaProducto.tvCodigo.setText(newProducto.getCodigo());
                             VistaProducto.tvNombre.setText(newProducto.getNombre());
-                            VistaProducto.tvTelefono.setText(newProducto.getTelefono());
-                            VistaProducto.tvEmail.setText(newProducto.getEmail());
+                            VistaProducto.tvStock.setText(newProducto.getStock());
+                            VistaProducto.tvPrecio.setText(newProducto.getPrecio());
                             finish();
                         } else {
                             etNombre.setText("");
                             etCodigo.setText("");
-                            etEmail.setText("");
-                            etTelefono.setText("");
+                            etPrecio.setText("");
+                            etStock.setText("");
                         }
                     }
                 }
@@ -130,10 +181,10 @@ public class EditarProducto extends AppCompatActivity {
         bEditar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(etCodigo.getText().toString().isEmpty()||etNombre.getText().toString().isEmpty()){
-                    Toast.makeText(getApplicationContext(),"Rellene el codigo y nombre", Toast.LENGTH_LONG).show();
+                if(etCodigo.getText().toString().isEmpty()||etNombre.getText().toString().isEmpty()||codigoProveedor.isEmpty()){
+                    Toast.makeText(getApplicationContext(),"El nombre, codigo y proveedor son campos obligatorios", Toast.LENGTH_LONG).show();
                 }else {
-                    newProducto = new Producto(etNombre.getText().toString(), etCodigo.getText().toString(), etEmail.getText().toString(), etTelefono.getText().toString(), Uri.parse(c.getImageUri()), Uri.parse(c.getImgStorage()));
+                    newProducto = new Producto(etNombre.getText().toString(), etCodigo.getText().toString(),codigoProveedor, Integer.parseInt(etPrecio.getText().toString()), Integer.parseInt(etStock.getText().toString()), Uri.parse(c.getImageUri()), Uri.parse(c.getImgStorage()));
                     database = FirebaseDatabase.getInstance().getReference().child("Productos").child(codigo);
                     editado = true;
                     database.removeValue();
