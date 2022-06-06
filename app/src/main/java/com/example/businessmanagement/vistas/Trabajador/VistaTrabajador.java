@@ -52,7 +52,9 @@ public class VistaTrabajador extends AppCompatActivity {
         tbTrabajador = findViewById(R.id.tbTrabajador);
 
         cargarTrabajador();
+    }
 
+    private void cargarToolbar(){
         setSupportActionBar(tbTrabajador);
         getSupportActionBar().setTitle(trabajador.getNombre());
     }
@@ -73,6 +75,7 @@ public class VistaTrabajador extends AppCompatActivity {
                         tvTelefono.setText(trabajador.getTelefono());
                     }
                 }
+                cargarToolbar();
             }
 
             @Override

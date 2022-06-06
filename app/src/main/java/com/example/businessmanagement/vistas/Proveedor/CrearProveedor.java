@@ -67,7 +67,7 @@ public class CrearProveedor extends AppCompatActivity {
         crear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                database.child("Proveedores").addListenerForSingleValueEvent(new ValueEventListener() {
+                database.child("Proveedores").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if(nombreProveedor.getText().toString().isEmpty()||nifProveedor.getText().toString().isEmpty()){
@@ -175,11 +175,14 @@ public class CrearProveedor extends AppCompatActivity {
     }
 
     private void crearProveedor() {
-        database.addListenerForSingleValueEvent(new ValueEventListener() {
+        database.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (imageUri != null) {
                     Proveedor a = new Proveedor(nombreProveedor.getText().toString(), nifProveedor.getText().toString(), telefonoProveedor.getText().toString(), emailProveedor.getText().toString(), imageUri, postStorage);
+                    database.child("Proveedores").child(a.getNif()).setValue(a);
+                }else{
+                    Proveedor a = new Proveedor(nombreProveedor.getText().toString(), nifProveedor.getText().toString(), telefonoProveedor.getText().toString(), emailProveedor.getText().toString(), "","");
                     database.child("Proveedores").child(a.getNif()).setValue(a);
                 }
             }

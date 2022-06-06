@@ -52,6 +52,9 @@ public class VistaProveedor extends AppCompatActivity {
 
         cargarCliente();
 
+    }
+
+    private void cargarToolbar(){
         setSupportActionBar(tbProveedor);
         getSupportActionBar().setTitle(proveedor.getNombre());
     }
@@ -72,6 +75,7 @@ public class VistaProveedor extends AppCompatActivity {
                         tvTelefono.setText(proveedor.getTelefono());
                     }
                 }
+                cargarToolbar();
             }
 
             @Override

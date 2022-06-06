@@ -51,7 +51,9 @@ public class VistaCliente extends AppCompatActivity {
         tbCliente = findViewById(R.id.tbCliente);
 
         cargarCliente();
+    }
 
+    private void cargarToolbar(){
         setSupportActionBar(tbCliente);
         getSupportActionBar().setTitle(cliente.getNombre());
     }
@@ -72,6 +74,7 @@ public class VistaCliente extends AppCompatActivity {
                         tvTelefono.setText(cliente.getTelefono());
                     }
                 }
+                cargarToolbar();
             }
 
             @Override

@@ -16,21 +16,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".vistas.Cliente.ActivityClientes"
-            android:label="@string/title_activity_clientes"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".vistas.Pedido.VistaPedido" />
-        <activity
-            android:name=".vistas.Pedido.ActivityPedidos"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".vistas.Producto.EditarProducto"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".vistas.Producto.VistaProducto"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".vistas.Comercio.EditarComercio"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".vistas.Producto.CrearProducto"
@@ -39,26 +28,60 @@
             android:name=".vistas.Producto.ActivityProductos"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".vistas.Comercio.VistaComercio"
+            android:name=".vistas.Cliente.EditarCliente"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".vistas.Usuario.VistaUsuario"
+            android:name=".vistas.Cliente.VistaCliente"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".vistas.Usuario.ActivityUsuarios"
+            android:name=".vistas.Cliente.CrearCliente"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".vistas.Comercio.CrearComercio"
+            android:name=".vistas.Cliente.ActivityClientes"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".vistas.Comercio.ActivityComercios"
+            android:name=".vistas.Acreedor.EditarAcreedor"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".vistas.Acreedor.VistaAcreedor"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".vistas.Acreedor.CrearAcreedor"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".vistas.Acreedor.ActivityAcreedores"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".vistas.Proveedor.EditarProveedor"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".vistas.Proveedor.VistaProveedor"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".vistas.Proveedor.CrearProveedor"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".vistas.Proveedor.ActivityProveedores"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".vistas.Trabajador.EditarTrabajador"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".vistas.Trabajador.VistaTrabajador"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".vistas.Trabajador.CrearTrabajador"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".vistas.Trabajador.ActivityTrabajadores"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".vistas.Main"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

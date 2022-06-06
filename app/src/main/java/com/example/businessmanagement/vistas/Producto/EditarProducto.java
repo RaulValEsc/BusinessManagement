@@ -75,7 +75,7 @@ public class EditarProducto extends AppCompatActivity {
 
         ivProducto = findViewById(R.id.ivProducto);
 
-        etCodigo = findViewById(R.id.tvEditarDNI);
+        etCodigo = findViewById(R.id.tvEditarCodigo);
         etNombre = findViewById(R.id.tvEditarNombre);
         etPrecio = findViewById(R.id.tvEditarPrecio);
         etStock = findViewById(R.id.tvEditarStock);
@@ -84,21 +84,23 @@ public class EditarProducto extends AppCompatActivity {
 
         codigo = b.getString("codigo");
 
-        cargarProducto();
+        database = FirebaseDatabase.getInstance().getReference();
 
-        cargarSpinnerProveedores();
+        cargarProveedores();
+
+        cargarProducto();
 
         setup();
     }
 
-    private void cargarSpinnerProveedores() {
-
+    private  void cargarProveedores(){
         database.child("Proveedores").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    proveedores.add((Proveedor) child.getValue());
+                    proveedores.add(child.getValue(Proveedor.class));
                 }
+                cargarSpinnerProveedores();
             }
 
             @Override
@@ -106,12 +108,14 @@ public class EditarProducto extends AppCompatActivity {
 
             }
         });
+    }
 
-        Proveedor[] proveedoresList = (Proveedor[]) proveedores.toArray();
+    private void cargarSpinnerProveedores() {
+        Proveedor[] proveedoresList = proveedores.toArray(new Proveedor[0]);
 
         spinnerAdapter = new SpinnerProveedoresAdapter(this.getApplicationContext(), android.R.layout.simple_spinner_item, proveedoresList);
 
-        pickerProveedores = findViewById(R.id.pickProveedor);
+        pickerProveedores = findViewById(R.id.editPickProveedor);
 
         pickerProveedores.setAdapter(spinnerAdapter);
 
@@ -131,8 +135,7 @@ public class EditarProducto extends AppCompatActivity {
     }
 
     private void cargarProducto() {
-        database = FirebaseDatabase.getInstance().getReference().child("Productos");
-        database.addValueEventListener(new ValueEventListener() {
+        database.child("Productos").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(!aux) {
@@ -142,8 +145,8 @@ public class EditarProducto extends AppCompatActivity {
                         Glide.with(getApplicationContext()).load(c.getImageUri()).into(ivProducto);
                         etNombre.setText(c.getNombre());
                         etCodigo.setText(c.getCodigo());
-                        etStock.setText(c.getStock());
-                        etPrecio.setText(c.getPrecio());
+                        etStock.setText(""+c.getStock());
+                        etPrecio.setText(""+c.getPrecio());
                     } else {
                         for (DataSnapshot child : snapshot.getChildren()) {
                             if (etCodigo.getText().toString().equals(child.child("codigo").getValue().toString())) {

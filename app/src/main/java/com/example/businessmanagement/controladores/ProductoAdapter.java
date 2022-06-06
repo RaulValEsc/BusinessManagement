@@ -45,7 +45,7 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(c, VistaProducto.class);
-                intent.putExtra("nif",holder.codigo);
+                intent.putExtra("codigo",holder.codigo);
                 c.startActivity(intent);
             }
         });

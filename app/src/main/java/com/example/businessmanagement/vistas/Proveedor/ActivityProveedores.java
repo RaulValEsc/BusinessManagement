@@ -42,7 +42,7 @@ public class ActivityProveedores extends AppCompatActivity {
         fbAñadir = findViewById(R.id.fbAñadirProveedor);
         rvProveedores = findViewById(R.id.recyclerViewProveedores);
 
-        cargarClientes();
+        cargarProveedores();
 
         setup();
     }
@@ -57,7 +57,7 @@ public class ActivityProveedores extends AppCompatActivity {
         });
     }
 
-    private void cargarClientes() {
+    private void cargarProveedores() {
         database.child("Proveedores").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

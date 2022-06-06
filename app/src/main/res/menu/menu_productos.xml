@@ -7,4 +7,10 @@
     <item
         android:id="@+id/menuBorrar"
         android:title="Borrar" />
+    <item
+        android:id="@+id/menuComprar"
+        android:title="Comprar" />
+    <item
+        android:id="@+id/menuVender"
+        android:title="Vender" />
 </menu>

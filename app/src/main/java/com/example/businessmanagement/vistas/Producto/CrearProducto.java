@@ -72,19 +72,19 @@ public class CrearProducto extends AppCompatActivity {
 
         database = FirebaseDatabase.getInstance().getReference();
 
-        cargarSpinnerProveedores();
+        cargarProveedores();
 
         setup();
     }
 
-    private void cargarSpinnerProveedores() {
-
+    private void cargarProveedores(){
         database.child("Proveedores").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    proveedores.add((Proveedor) child.getValue());
+                    proveedores.add(child.getValue(Proveedor.class));
                 }
+                cargarSpinnerProveedores();
             }
 
             @Override
@@ -92,8 +92,10 @@ public class CrearProducto extends AppCompatActivity {
 
             }
         });
+    }
 
-        Proveedor[] proveedoresList = (Proveedor[]) proveedores.toArray();
+    private void cargarSpinnerProveedores() {
+        Proveedor[] proveedoresList = proveedores.toArray(new Proveedor[0]);
 
         spinnerAdapter = new SpinnerProveedoresAdapter(this.getApplicationContext(), android.R.layout.simple_spinner_item, proveedoresList);
 

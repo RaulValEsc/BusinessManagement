@@ -45,14 +45,14 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/tvEditarNIF"
+        android:id="@+id/tvEditarCodigo"
         android:layout_width="219dp"
         android:textColor="@color/darkModeColor"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="NIF"
+        android:text="Codigo"
         app:layout_constraintEnd_toEndOf="@+id/ivProducto"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/ivProducto"
@@ -64,13 +64,13 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:ems="10"
-        android:textColor="@color/darkModeColor"
         android:inputType="numberDecimal"
         android:text="Precio"
+        android:textColor="@color/darkModeColor"
         app:layout_constraintEnd_toEndOf="@+id/ivProducto"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/ivProducto"
-        app:layout_constraintTop_toBottomOf="@+id/tvEditarNIF" />
+        app:layout_constraintTop_toBottomOf="@+id/tvEditarCodigo" />
 
     <EditText
         android:id="@+id/tvEditarStock"
@@ -87,7 +87,7 @@
         app:layout_constraintTop_toBottomOf="@+id/tvEditarPrecio" />
 
     <Spinner
-        android:id="@+id/pickProveedor"
+        android:id="@+id/editPickProveedor"
         android:layout_width="219dp"
         android:layout_height="45dp"
         android:layout_marginTop="16dp"

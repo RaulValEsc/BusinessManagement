@@ -1,4 +1,5 @@
 package com.example.businessmanagement.vistas.Dialog;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -15,10 +16,9 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 
 import com.example.businessmanagement.R;
 
+public class DialogVenta extends AppCompatDialogFragment {
 
-public class DialogAñadir extends AppCompatDialogFragment {
-
-    private EditText saldoIngresar;
+    private EditText stockIngresar;
     private DialogListener listener;
 
     @NonNull
@@ -39,19 +39,17 @@ public class DialogAñadir extends AppCompatDialogFragment {
             public void onClick(DialogInterface dialog, int which) {
 
                 try {
-                    int stock = Integer.parseInt(saldoIngresar.getText().toString());
-                    listener.ingresarStock(stock);
+                    int stock = Integer.parseInt(stockIngresar.getText().toString());
+                    listener.venderStock(stock);
 
                 } catch (Exception e){
                     Toast.makeText(getContext(), "Cantidad inválida", Toast.LENGTH_LONG).show();
                 }
 
-
-
             }
         });
 
-        saldoIngresar = view.findViewById(R.id.etIngresarStock);
+        stockIngresar = view.findViewById(R.id.etIngresarStock);
 
         return builder.create();
     }
@@ -71,7 +69,7 @@ public class DialogAñadir extends AppCompatDialogFragment {
 
     public interface DialogListener{
 
-        void ingresarStock(int stock);
+        void venderStock(int stock);
 
     }
 

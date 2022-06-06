@@ -54,6 +54,10 @@ public class VistaAcreedor extends AppCompatActivity {
 
         cargarCliente();
 
+
+    }
+
+    private void cargarToolbar(){
         setSupportActionBar(tbAcreedor);
         getSupportActionBar().setTitle(acreedor.getNombre());
     }
@@ -74,6 +78,7 @@ public class VistaAcreedor extends AppCompatActivity {
                         tvTelefono.setText(acreedor.getTelefono());
                     }
                 }
+                cargarToolbar();
             }
 
             @Override

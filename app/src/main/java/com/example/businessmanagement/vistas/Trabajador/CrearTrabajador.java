@@ -67,7 +67,7 @@ public class CrearTrabajador extends AppCompatActivity {
         crear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                database.child("Trabajadores").addListenerForSingleValueEvent(new ValueEventListener() {
+                database.child("Trabajadores").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if(nombreTrabajador.getText().toString().isEmpty()||dniTrabajador.getText().toString().isEmpty()){
@@ -175,7 +175,7 @@ public class CrearTrabajador extends AppCompatActivity {
     }
 
     private void crearComercio() {
-        database.addListenerForSingleValueEvent(new ValueEventListener() {
+        database.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (imageUri != null) {

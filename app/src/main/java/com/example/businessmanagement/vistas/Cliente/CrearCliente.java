@@ -67,7 +67,7 @@ public class CrearCliente extends AppCompatActivity {
         crear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                database.child("Clientes").addListenerForSingleValueEvent(new ValueEventListener() {
+                database.child("Clientes").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if(nombreCliente.getText().toString().isEmpty()||dniCliente.getText().toString().isEmpty()){

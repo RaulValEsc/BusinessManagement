@@ -44,25 +44,25 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tvEmail"
+        android:id="@+id/tvStock"
         android:layout_width="157dp"
         android:layout_height="37dp"
         android:layout_marginTop="464dp"
         android:gravity="center"
         android:textColor="@color/darkModeColor"
-        android:text="Email"
+        android:text="Stock"
         app:layout_constraintEnd_toEndOf="@+id/ivProducto"
         app:layout_constraintStart_toStartOf="@+id/ivProducto"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tvTelefono"
+        android:id="@+id/tvPrecio"
         android:layout_width="157dp"
         android:layout_height="37dp"
         android:layout_marginTop="524dp"
         android:gravity="center"
         android:textColor="@color/darkModeColor"
-        android:text="Telefono"
+        android:text="Precio"
         app:layout_constraintEnd_toEndOf="@+id/ivProducto"
         app:layout_constraintStart_toStartOf="@+id/ivProducto"
         app:layout_constraintTop_toTopOf="parent" />

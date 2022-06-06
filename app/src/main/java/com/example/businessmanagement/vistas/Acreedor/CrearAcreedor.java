@@ -68,7 +68,7 @@ public class CrearAcreedor extends AppCompatActivity {
         crear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                database.child("Acreedores").addListenerForSingleValueEvent(new ValueEventListener() {
+                database.child("Acreedores").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if(nombreAcreedor.getText().toString().isEmpty()||nifAcreedor.getText().toString().isEmpty()){

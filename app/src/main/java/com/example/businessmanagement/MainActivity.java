@@ -30,6 +30,9 @@ public class MainActivity extends AppCompatActivity {
         pass = findViewById(R.id.pass);
         login = findViewById(R.id.login);
 
+        email.setText("raulvalesc@gmail.com");
+        pass.setText("Cantarranas19");
+
         setup();
     }
 
