@@ -3,7 +3,13 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Projects/BusinessManagement/app/src/main/res/layout/activity_compras.xml" value="0.271875" />
         <entry key="..\:/Projects/BusinessManagement/app/src/main/res/layout/activity_crear_cliente.xml" value="0.3625" />
+        <entry key="..\:/Projects/BusinessManagement/app/src/main/res/layout/activity_productos.xml" value="0.3625" />
+        <entry key="..\:/Projects/BusinessManagement/app/src/main/res/layout/activity_ventas.xml" value="0.18541666666666667" />
+        <entry key="..\:/Projects/BusinessManagement/app/src/main/res/layout/item_cliente.xml" value="0.3625" />
+        <entry key="..\:/Projects/BusinessManagement/app/src/main/res/layout/item_compra.xml" value="0.27109375" />
+        <entry key="..\:/Projects/BusinessManagement/app/src/main/res/layout/item_venta.xml" value="0.18541666666666667" />
         <entry key="..\:/Projects/DAMProjects/BusinessManagement/app/src/main/res/layout/activity_crear_producto.xml" value="0.33" />
         <entry key="..\:/Projects/DAMProjects/BusinessManagement/app/src/main/res/layout/activity_crear_proveedor.xml" value="0.17239583333333333" />
         <entry key="..\:/Projects/DAMProjects/BusinessManagement/app/src/main/res/layout/activity_editar_producto.xml" value="0.2640625" />

@@ -76,6 +76,12 @@
             android:name=".vistas.Trabajador.ActivityTrabajadores"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name=".vistas.Compra.ActivityCompras"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".vistas.Venta.ActivityVentas"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".vistas.Main"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
