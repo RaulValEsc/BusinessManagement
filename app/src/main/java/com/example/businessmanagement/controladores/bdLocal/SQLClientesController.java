@@ -6,6 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.example.businessmanagement.modelos.Cliente;
+import com.example.businessmanagement.modelos.Cliente;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
@@ -156,6 +159,27 @@ public class SQLClientesController extends SqLiteController{
 
         }
         return listaClientes;
+    }
+
+    // SINCRONIZAR
+    public void sincronizarCambios(){
+        ArrayList<Cliente> clientesBorrarAux = cargarClientesBorrarAux();
+        ArrayList<Cliente> clientesAux = cargarClientesAux();
+
+        for (Cliente a:clientesBorrarAux) {
+            DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("Clientes").child(a.getDni());
+            database.removeValue();
+        }
+
+        for (Cliente a:clientesAux) {
+            DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("Clientes").child(a.getDni());
+            database.setValue(a);
+        }
+
+        SQLiteDatabase db = getReadableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS " + TABLA_AUX_CLIENTES);db.execSQL("DROP TABLE IF EXISTS " + TABLA_AUX_BORRAR_CLIENTES);
+        db.execSQL(createClientesAux);db.execSQL(createClientesAuxBorrar);
+
     }
 }
 

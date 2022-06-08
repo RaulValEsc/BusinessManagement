@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.example.businessmanagement.modelos.Venta;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
@@ -148,6 +150,27 @@ public class SQLVentasController extends SqLiteController{
 
         }
         return listaVentas;
+    }
+
+    // SINCRONIZAR
+    public void sincronizarCambios(){
+        ArrayList<Venta> ventasBorrarAux = cargarVentasBorrarAux();
+        ArrayList<Venta> ventasAux = cargarVentasAux();
+
+        for (Venta a:ventasBorrarAux) {
+            DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("Ventas").child(a.getIdProducto());
+            database.removeValue();
+        }
+
+        for (Venta a:ventasAux) {
+            DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("Ventas").child(a.getIdProducto());
+            database.setValue(a);
+        }
+
+        SQLiteDatabase db = getReadableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS " + TABLA_AUX_VENTAS);db.execSQL("DROP TABLE IF EXISTS " + TABLA_AUX_BORRAR_VENTAS);
+        db.execSQL(createVentasAux);db.execSQL(createVentasAuxBorrar);
+
     }
 }
 

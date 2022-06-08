@@ -42,49 +42,49 @@ public class SqLiteController extends SQLiteOpenHelper {
     public static int version = 3;
 
     // SENTENCIAS SQL CREATE TABLE
-    private static final String createAcreedores = "CREATE TABLE "+TABLA_ACREEDORES+" (nif VARCHAR2(100) PRIMARY KEY, nombre VARCHAR(100), " +
+    public static final String createAcreedores = "CREATE TABLE "+TABLA_ACREEDORES+" (nif VARCHAR2(100) PRIMARY KEY, nombre VARCHAR(100), " +
             "telefono VARCHAR(20), email VARCHAR(100))";
-    private static final String createAcreedoresAux = "CREATE TABLE "+TABLA_AUX_ACREEDORES+" (nif VARCHAR2(100) PRIMARY KEY, nombre VARCHAR(100), " +
+    public static final String createAcreedoresAux = "CREATE TABLE "+TABLA_AUX_ACREEDORES+" (nif VARCHAR2(100) PRIMARY KEY, nombre VARCHAR(100), " +
             "telefono VARCHAR(20), email VARCHAR(100))";
-    private static final String createAcreedoresAuxBorrar = "CREATE TABLE "+TABLA_AUX_BORRAR_ACREEDORES+" (nif VARCHAR2(100) PRIMARY KEY, nombre VARCHAR(100), " +
-            "telefono VARCHAR(20), email VARCHAR(100))";
-
-    private static final String createClientes = "CREATE TABLE "+TABLA_CLIENTES+" (dni VARCHAR2(100) PRIMARY KEY, nombre VARCHAR(100), " +
-            "telefono VARCHAR(20), email VARCHAR(100))";
-    private static final String createClientesAux = "CREATE TABLE "+TABLA_AUX_CLIENTES+" (dni VARCHAR2(100) PRIMARY KEY, nombre VARCHAR(100), " +
-            "telefono VARCHAR(20), email VARCHAR(100))";
-    private static final String createClientesAuxBorrar = "CREATE TABLE "+TABLA_AUX_BORRAR_CLIENTES+" (dni VARCHAR2(100) PRIMARY KEY, nombre VARCHAR(100), " +
+    public static final String createAcreedoresAuxBorrar = "CREATE TABLE "+TABLA_AUX_BORRAR_ACREEDORES+" (nif VARCHAR2(100) PRIMARY KEY, nombre VARCHAR(100), " +
             "telefono VARCHAR(20), email VARCHAR(100))";
 
-    private static final String createCompras = "CREATE TABLE "+TABLA_COMPRAS+" (idProducto VARCHAR2(100) PRIMARY KEY, stock NUMBER(10), precio NUMBER(10))";
-    private static final String createComprasAux = "CREATE TABLE "+TABLA_AUX_COMPRAS+" (idProducto VARCHAR2(100) PRIMARY KEY, stock NUMBER(10), precio NUMBER(10))";
-    private static final String createComprasAuxBorrar = "CREATE TABLE "+TABLA_AUX_BORRAR_COMPRAS+" (idProducto VARCHAR2(100) PRIMARY KEY, stock NUMBER(10), precio NUMBER(10))";
+    public static final String createClientes = "CREATE TABLE "+TABLA_CLIENTES+" (dni VARCHAR2(100) PRIMARY KEY, nombre VARCHAR(100), " +
+            "telefono VARCHAR(20), email VARCHAR(100))";
+    public static final String createClientesAux = "CREATE TABLE "+TABLA_AUX_CLIENTES+" (dni VARCHAR2(100) PRIMARY KEY, nombre VARCHAR(100), " +
+            "telefono VARCHAR(20), email VARCHAR(100))";
+    public static final String createClientesAuxBorrar = "CREATE TABLE "+TABLA_AUX_BORRAR_CLIENTES+" (dni VARCHAR2(100) PRIMARY KEY, nombre VARCHAR(100), " +
+            "telefono VARCHAR(20), email VARCHAR(100))";
 
-    private static final String createProductos = "CREATE TABLE "+TABLA_PRODUCTOS+" (codigo VARCHAR2(100) PRIMARY KEY, idProveedor VARCHAR2(100), nombre VARCHAR(100), " +
+    public static final String createCompras = "CREATE TABLE "+TABLA_COMPRAS+" (idProducto VARCHAR2(100) PRIMARY KEY, stock NUMBER(10), precio NUMBER(10))";
+    public static final String createComprasAux = "CREATE TABLE "+TABLA_AUX_COMPRAS+" (idProducto VARCHAR2(100) PRIMARY KEY, stock NUMBER(10), precio NUMBER(10))";
+    public static final String createComprasAuxBorrar = "CREATE TABLE "+TABLA_AUX_BORRAR_COMPRAS+" (idProducto VARCHAR2(100) PRIMARY KEY, stock NUMBER(10), precio NUMBER(10))";
+
+    public static final String createProductos = "CREATE TABLE "+TABLA_PRODUCTOS+" (codigo VARCHAR2(100) PRIMARY KEY, idProveedor VARCHAR2(100), nombre VARCHAR(100), " +
             "stock NUMBER(10), precio NUMBER(10))";
-    private static final String createProductosAux = "CREATE TABLE "+TABLA_AUX_PRODUCTOS+" (codigo VARCHAR2(100) PRIMARY KEY, idProveedor VARCHAR2(100), nombre VARCHAR(100), " +
+    public static final String createProductosAux = "CREATE TABLE "+TABLA_AUX_PRODUCTOS+" (codigo VARCHAR2(100) PRIMARY KEY, idProveedor VARCHAR2(100), nombre VARCHAR(100), " +
             "stock NUMBER(10), precio NUMBER(10))";
-    private static final String createProductosAuxBorrar = "CREATE TABLE "+TABLA_AUX_BORRAR_PRODUCTOS+" (codigo VARCHAR2(100) PRIMARY KEY, idProveedor VARCHAR2(100), nombre VARCHAR(100), " +
+    public static final String createProductosAuxBorrar = "CREATE TABLE "+TABLA_AUX_BORRAR_PRODUCTOS+" (codigo VARCHAR2(100) PRIMARY KEY, idProveedor VARCHAR2(100), nombre VARCHAR(100), " +
             "stock NUMBER(10), precio NUMBER(10))";
 
-    private static final String createProveedores = "CREATE TABLE "+TABLA_PROVEEDORES+" (nif VARCHAR2(100) PRIMARY KEY, nombre VARCHAR(100), " +
+    public static final String createProveedores = "CREATE TABLE "+TABLA_PROVEEDORES+" (nif VARCHAR2(100) PRIMARY KEY, nombre VARCHAR(100), " +
             "telefono VARCHAR(20), email VARCHAR(100))";
-    private static final String createProveedoresAux = "CREATE TABLE "+TABLA_AUX_PROVEEDORES+" (nif VARCHAR2(100) PRIMARY KEY, nombre VARCHAR(100), " +
+    public static final String createProveedoresAux = "CREATE TABLE "+TABLA_AUX_PROVEEDORES+" (nif VARCHAR2(100) PRIMARY KEY, nombre VARCHAR(100), " +
             "telefono VARCHAR(20), email VARCHAR(100))";
-    private static final String createProveedoresAuxBorrar = "CREATE TABLE "+TABLA_AUX_BORRAR_PROVEEDORES+" (nif VARCHAR2(100) PRIMARY KEY, nombre VARCHAR(100), " +
-            "telefono VARCHAR(20), email VARCHAR(100))";
-
-
-    private static final String createTrabajadores = "CREATE TABLE "+TABLA_TRABAJADORES+" (dni VARCHAR2(100) PRIMARY KEY, nombre VARCHAR(100), " +
-            "telefono VARCHAR(20), email VARCHAR(100))";
-    private static final String createTrabajadoresAux = "CREATE TABLE "+TABLA_AUX_TRABAJADORES+" (dni VARCHAR2(100) PRIMARY KEY, nombre VARCHAR(100), " +
-            "telefono VARCHAR(20), email VARCHAR(100))";
-    private static final String createTrabajadoresAuxBorrar = "CREATE TABLE "+TABLA_AUX_BORRAR_TRABAJADORES+" (dni VARCHAR2(100) PRIMARY KEY, nombre VARCHAR(100), " +
+    public static final String createProveedoresAuxBorrar = "CREATE TABLE "+TABLA_AUX_BORRAR_PROVEEDORES+" (nif VARCHAR2(100) PRIMARY KEY, nombre VARCHAR(100), " +
             "telefono VARCHAR(20), email VARCHAR(100))";
 
-    private static final String createVentas = "CREATE TABLE "+TABLA_VENTAS+" (idProducto VARCHAR2(100) PRIMARY KEY, stock NUMBER(10), precio NUMBER(10))";
-    private static final String createVentasAux = "CREATE TABLE "+TABLA_AUX_VENTAS+" (idProducto VARCHAR2(100) PRIMARY KEY, stock NUMBER(10), precio NUMBER(10))";
-    private static final String createVentasAuxBorrar = "CREATE TABLE "+TABLA_AUX_BORRAR_VENTAS+" (idProducto VARCHAR2(100) PRIMARY KEY, stock NUMBER(10), precio NUMBER(10))";
+
+    public static final String createTrabajadores = "CREATE TABLE "+TABLA_TRABAJADORES+" (dni VARCHAR2(100) PRIMARY KEY, nombre VARCHAR(100), " +
+            "telefono VARCHAR(20), email VARCHAR(100))";
+    public static final String createTrabajadoresAux = "CREATE TABLE "+TABLA_AUX_TRABAJADORES+" (dni VARCHAR2(100) PRIMARY KEY, nombre VARCHAR(100), " +
+            "telefono VARCHAR(20), email VARCHAR(100))";
+    public static final String createTrabajadoresAuxBorrar = "CREATE TABLE "+TABLA_AUX_BORRAR_TRABAJADORES+" (dni VARCHAR2(100) PRIMARY KEY, nombre VARCHAR(100), " +
+            "telefono VARCHAR(20), email VARCHAR(100))";
+
+    public static final String createVentas = "CREATE TABLE "+TABLA_VENTAS+" (idProducto VARCHAR2(100) PRIMARY KEY, stock NUMBER(10), precio NUMBER(10))";
+    public static final String createVentasAux = "CREATE TABLE "+TABLA_AUX_VENTAS+" (idProducto VARCHAR2(100) PRIMARY KEY, stock NUMBER(10), precio NUMBER(10))";
+    public static final String createVentasAuxBorrar = "CREATE TABLE "+TABLA_AUX_BORRAR_VENTAS+" (idProducto VARCHAR2(100) PRIMARY KEY, stock NUMBER(10), precio NUMBER(10))";
     // END SENTENCIAS SQL CREATE TABLE
 
     public SqLiteController(Context context) {

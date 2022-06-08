@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.example.businessmanagement.modelos.Acreedor;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
@@ -156,5 +158,26 @@ public class SQLAcreedoresController extends SqLiteController{
 
         }
         return listaAcreedores;
+    }
+
+    // SINCRONIZAR
+    public void sincronizarCambios(){
+        ArrayList<Acreedor> acreedoresBorrarAux = cargarAcreedoresBorrarAux();
+        ArrayList<Acreedor> acreedoresAux = cargarAcreedoresAux();
+
+        for (Acreedor a:acreedoresBorrarAux) {
+            DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("Acreedores").child(a.getNif());
+            database.removeValue();
+        }
+
+        for (Acreedor a:acreedoresAux) {
+            DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("Acreedores").child(a.getNif());
+            database.setValue(a);
+        }
+
+        SQLiteDatabase db = getReadableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS " + TABLA_AUX_ACREEDORES);db.execSQL("DROP TABLE IF EXISTS " + TABLA_AUX_BORRAR_ACREEDORES);
+        db.execSQL(createAcreedoresAux);db.execSQL(createAcreedoresAuxBorrar);
+
     }
 }

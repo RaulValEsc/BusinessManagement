@@ -7,6 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.example.businessmanagement.modelos.Compra;
 import com.example.businessmanagement.modelos.Compra;
+import com.example.businessmanagement.modelos.Compra;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
@@ -149,5 +152,26 @@ public class SQLComprasController extends SqLiteController{
 
         }
         return listaCompras;
+    }
+
+    // SINCRONIZAR
+    public void sincronizarCambios(){
+        ArrayList<Compra> comprasBorrarAux = cargarComprasBorrarAux();
+        ArrayList<Compra> comprasAux = cargarComprasAux();
+
+        for (Compra a:comprasBorrarAux) {
+            DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("Compras").child(a.getIdProducto());
+            database.removeValue();
+        }
+
+        for (Compra a:comprasAux) {
+            DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("Compras").child(a.getIdProducto());
+            database.setValue(a);
+        }
+
+        SQLiteDatabase db = getReadableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS " + TABLA_AUX_COMPRAS);db.execSQL("DROP TABLE IF EXISTS " + TABLA_AUX_BORRAR_COMPRAS);
+        db.execSQL(createComprasAux);db.execSQL(createComprasAuxBorrar);
+
     }
 }

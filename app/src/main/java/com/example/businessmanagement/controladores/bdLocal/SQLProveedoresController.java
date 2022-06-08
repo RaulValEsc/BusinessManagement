@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.example.businessmanagement.modelos.Proveedor;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
@@ -156,6 +158,27 @@ public class SQLProveedoresController extends SqLiteController{
 
         }
         return listaProveedores;
+    }
+
+    // SINCRONIZAR
+    public void sincronizarCambios(){
+        ArrayList<Proveedor> proveedoresBorrarAux = cargarProveedoresBorrarAux();
+        ArrayList<Proveedor> proveedoresAux = cargarProveedoresAux();
+
+        for (Proveedor a:proveedoresBorrarAux) {
+            DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("Proveedores").child(a.getNif());
+            database.removeValue();
+        }
+
+        for (Proveedor a:proveedoresAux) {
+            DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("Proveedores").child(a.getNif());
+            database.setValue(a);
+        }
+
+        SQLiteDatabase db = getReadableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS " + TABLA_AUX_PROVEEDORES);db.execSQL("DROP TABLE IF EXISTS " + TABLA_AUX_BORRAR_PROVEEDORES);
+        db.execSQL(createProveedoresAux);db.execSQL(createProveedoresAuxBorrar);
+
     }
 }
 

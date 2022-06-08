@@ -17,8 +17,10 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
 import com.example.businessmanagement.R;
+import com.example.businessmanagement.controladores.bdLocal.SQLComprasController;
 import com.example.businessmanagement.controladores.bdLocal.SQLProductosController;
 import com.example.businessmanagement.controladores.bdLocal.SQLProductosController;
+import com.example.businessmanagement.controladores.bdLocal.SQLVentasController;
 import com.example.businessmanagement.modelos.Compra;
 import com.example.businessmanagement.modelos.Producto;
 import com.example.businessmanagement.modelos.Venta;
@@ -157,72 +159,30 @@ public class VistaProducto extends AppCompatActivity implements DialogCompra.Dia
 
     @Override
     public void ingresarStock(int stock) {
-        database = FirebaseDatabase.getInstance().getReference().child("Productos").child(producto.getCodigo()).child("stock");
-        database.setValue(producto.getStock()+stock);
-        producto.setStock(producto.getStock()+stock);
-
-        existente = false;
-        compraventarealizada = false;
-
-        Compra compra = new Compra(producto.getCodigo(),stock,producto.getPrecio()*stock);
-        database = FirebaseDatabase.getInstance().getReference().child("Compras");
-        database.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(compraventarealizada == false){
-                    for (DataSnapshot child : snapshot.getChildren()){
-                        if(child.child("idProducto").getValue().toString().equals(compra.getIdProducto())){
-                            Compra compra1 = child.getValue(Compra.class);
-
-                            compra1.setStock(compra1.getStock()+stock);
-
-                            database.child(compra1.getIdProducto()).setValue(compra1);
-
-                            existente = true;
-
-                            compraventarealizada = true;
-
-                            return;
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-        if(existente == false){
-            database.child(compra.getIdProducto()).setValue(compra);
-        }
-    }
-
-    @Override
-    public void venderStock(int stock) {
-        if(producto.getStock()>stock){
+        SQLComprasController sql = new SQLComprasController(getApplicationContext());
+        SQLProductosController sqlP = new SQLProductosController(getApplicationContext());
+        if(isNetworkAvailable()) {
             database = FirebaseDatabase.getInstance().getReference().child("Productos").child(producto.getCodigo()).child("stock");
-            database.setValue(producto.getStock()-stock);
-            tvStock.setText("Stock: "+producto.getStock());
+            database.setValue(producto.getStock() + stock);
+            producto.setStock(producto.getStock() + stock);
+            tvStock.setText("Stock: " + producto.getStock());
 
             existente = false;
             compraventarealizada = false;
 
-            Venta venta = new Venta(producto.getCodigo(),stock,producto.getPrecio()*stock);
-            database = FirebaseDatabase.getInstance().getReference().child("Ventas");
+            Compra compra = new Compra(producto.getCodigo(), stock, producto.getPrecio() * stock);
+            database = FirebaseDatabase.getInstance().getReference().child("Compras");
             database.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if(compraventarealizada == false){
-                        for (DataSnapshot child : snapshot.getChildren()){
-                            if(child.child("idProducto").getValue().toString().equals(venta.getIdProducto())){
-                                System.out.println("GOLLLLASDEKDSA");
-                                Venta venta1 = child.getValue(Venta.class);
+                    if (compraventarealizada == false) {
+                        for (DataSnapshot child : snapshot.getChildren()) {
+                            if (child.child("idProducto").getValue().toString().equals(compra.getIdProducto())) {
+                                Compra compra1 = child.getValue(Compra.class);
 
-                                venta1.setStock(venta1.getStock()+stock);
+                                compra1.setStock(compra1.getStock() + stock);
 
-                                database.child(venta1.getIdProducto()).setValue(venta1);
+                                database.child(compra1.getIdProducto()).setValue(compra1);
 
                                 existente = true;
 
@@ -241,8 +201,91 @@ public class VistaProducto extends AppCompatActivity implements DialogCompra.Dia
             });
 
             if(existente == false){
-                database.child(venta.getIdProducto()).setValue(venta);
+                database.child(compra.getIdProducto()).setValue(compra);
             }
+        } else {
+            producto.setStock(producto.getStock()-stock);
+            tvStock.setText("Stock: " + producto.getStock());
+
+            sqlP.borrarProductoAux(producto);
+            sqlP.anadirProductoAux(producto);
+
+            Compra compra = new Compra(producto.getCodigo(), stock, producto.getPrecio() * stock);
+            sql.borrarCompraAux(compra);
+            sql.anadirCompraAux(compra);
+        }
+        sqlP.modificaProducto(producto);
+
+        Compra compra = new Compra(producto.getCodigo(), stock, producto.getPrecio() * stock);
+        if(sql.anadirCompra(compra)==-1){
+            sql.modificaCompra(compra);
+        }
+    }
+
+    @Override
+    public void venderStock(int stock) {
+        if(producto.getStock()>stock){
+            SQLVentasController sql = new SQLVentasController(getApplicationContext());
+            SQLProductosController sqlP = new SQLProductosController(getApplicationContext());
+            if(isNetworkAvailable()) {
+                database = FirebaseDatabase.getInstance().getReference().child("Productos").child(producto.getCodigo()).child("stock");
+                database.setValue(producto.getStock() - stock);
+                producto.setStock(producto.getStock()-stock);
+                tvStock.setText("Stock: " + producto.getStock());
+
+                existente = false;
+                compraventarealizada = false;
+
+                Venta venta = new Venta(producto.getCodigo(), stock, producto.getPrecio() * stock);
+                database = FirebaseDatabase.getInstance().getReference().child("Ventas");
+                database.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (compraventarealizada == false) {
+                            for (DataSnapshot child : snapshot.getChildren()) {
+                                if (child.child("idProducto").getValue().toString().equals(venta.getIdProducto())) {
+                                    Venta venta1 = child.getValue(Venta.class);
+
+                                    venta1.setStock(venta1.getStock() + stock);
+
+                                    database.child(venta1.getIdProducto()).setValue(venta1);
+
+                                    existente = true;
+
+                                    compraventarealizada = true;
+
+                                    return;
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
+                if (existente == false) {
+                    database.child(venta.getIdProducto()).setValue(venta);
+                }
+            } else {
+                producto.setStock(producto.getStock()-stock);
+                tvStock.setText("Stock: " + producto.getStock());
+
+                sqlP.borrarProductoAux(producto);
+                sqlP.anadirProductoAux(producto);
+
+                Venta venta = new Venta(producto.getCodigo(), stock, producto.getPrecio() * stock);
+                sql.borrarVentaAux(venta);
+                sql.anadirVentaAux(venta);
+            }
+                sqlP.modificaProducto(producto);
+
+                Venta venta = new Venta(producto.getCodigo(), stock, producto.getPrecio() * stock);
+                if(sql.anadirVenta(venta)==-1){
+                    sql.modificaVenta(venta);
+                }
         }else{
             Toast.makeText(getApplicationContext(), "No puedes vender más unidades que el stock disponible.", Toast.LENGTH_LONG).show();
         }

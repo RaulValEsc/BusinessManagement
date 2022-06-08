@@ -6,6 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.example.businessmanagement.modelos.Trabajador;
+import com.example.businessmanagement.modelos.Trabajador;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
@@ -156,6 +159,27 @@ public class SQLTrabajadoresController extends SqLiteController{
 
         }
         return listaTrabajadores;
+    }
+
+    // SINCRONIZAR
+    public void sincronizarCambios(){
+        ArrayList<Trabajador> trabajadoresBorrarAux = cargarTrabajadoresBorrarAux();
+        ArrayList<Trabajador> trabajadoresAux = cargarTrabajadoresAux();
+
+        for (Trabajador a:trabajadoresBorrarAux) {
+            DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("Trabajadores").child(a.getDni());
+            database.removeValue();
+        }
+
+        for (Trabajador a:trabajadoresAux) {
+            DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("Trabajadores").child(a.getDni());
+            database.setValue(a);
+        }
+
+        SQLiteDatabase db = getReadableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS " + TABLA_AUX_TRABAJADORES);db.execSQL("DROP TABLE IF EXISTS " + TABLA_AUX_BORRAR_TRABAJADORES);
+        db.execSQL(createTrabajadoresAux);db.execSQL(createTrabajadoresAuxBorrar);
+
     }
 }
 

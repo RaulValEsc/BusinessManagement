@@ -7,6 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.example.businessmanagement.modelos.Producto;
 import com.example.businessmanagement.modelos.Producto;
+import com.example.businessmanagement.modelos.Producto;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
@@ -165,5 +168,26 @@ public class SQLProductosController extends SqLiteController{
 
         }
         return listaProductos;
+    }
+
+    // SINCRONIZAR
+    public void sincronizarCambios(){
+        ArrayList<Producto> productosBorrarAux = cargarProductosBorrarAux();
+        ArrayList<Producto> productosAux = cargarProductosAux();
+
+        for (Producto a:productosBorrarAux) {
+            DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("Productos").child(a.getCodigo());
+            database.removeValue();
+        }
+
+        for (Producto a:productosAux) {
+            DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("Productos").child(a.getCodigo());
+            database.setValue(a);
+        }
+
+        SQLiteDatabase db = getReadableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS " + TABLA_AUX_PRODUCTOS);db.execSQL("DROP TABLE IF EXISTS " + TABLA_AUX_BORRAR_PRODUCTOS);
+        db.execSQL(createProductosAux);db.execSQL(createProductosAuxBorrar);
+
     }
 }

@@ -13,6 +13,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.businessmanagement.controladores.bdLocal.SQLAcreedoresController;
+import com.example.businessmanagement.controladores.bdLocal.SQLClientesController;
+import com.example.businessmanagement.controladores.bdLocal.SQLComprasController;
+import com.example.businessmanagement.controladores.bdLocal.SQLProductosController;
+import com.example.businessmanagement.controladores.bdLocal.SQLProveedoresController;
+import com.example.businessmanagement.controladores.bdLocal.SQLTrabajadoresController;
+import com.example.businessmanagement.controladores.bdLocal.SQLVentasController;
 import com.example.businessmanagement.vistas.Main;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -33,8 +40,28 @@ public class MainActivity extends AppCompatActivity {
         pass = findViewById(R.id.pass);
         login = findViewById(R.id.login);
 
-        email.setText("raulvalesc@gmail.com");
-        pass.setText("Cantarranas19");
+        if(isNetworkAvailable()){
+            SQLAcreedoresController sqlAcreedoresController = new SQLAcreedoresController(getApplicationContext());
+            sqlAcreedoresController.sincronizarCambios();
+
+            SQLClientesController sqlClientesController = new SQLClientesController(getApplicationContext());
+            sqlClientesController.sincronizarCambios();
+
+            SQLComprasController sqlComprasController = new SQLComprasController(getApplicationContext());
+            sqlComprasController.sincronizarCambios();
+
+            SQLProductosController sqlProductosController = new SQLProductosController(getApplicationContext());
+            sqlProductosController.sincronizarCambios();
+
+            SQLProveedoresController sqlProveedoresController = new SQLProveedoresController(getApplicationContext());
+            sqlProveedoresController.sincronizarCambios();
+
+            SQLTrabajadoresController sqlTrabajadoresController = new SQLTrabajadoresController(getApplicationContext());
+            sqlTrabajadoresController.sincronizarCambios();
+
+            SQLVentasController sqlVentasController = new SQLVentasController(getApplicationContext());
+            sqlVentasController.sincronizarCambios();
+        }
 
         setup();
     }
