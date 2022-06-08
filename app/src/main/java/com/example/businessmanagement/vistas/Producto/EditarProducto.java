@@ -1,7 +1,10 @@
 package com.example.businessmanagement.vistas.Producto;
 
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -20,6 +23,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.example.businessmanagement.R;
 import com.example.businessmanagement.controladores.SpinnerProveedoresAdapter;
+import com.example.businessmanagement.controladores.bdLocal.SQLAcreedoresController;
+import com.example.businessmanagement.controladores.bdLocal.SQLProductosController;
+import com.example.businessmanagement.controladores.bdLocal.SQLProveedoresController;
+import com.example.businessmanagement.modelos.Producto;
 import com.example.businessmanagement.modelos.Producto;
 import com.example.businessmanagement.modelos.Proveedor;
 import com.google.firebase.database.DataSnapshot;
@@ -69,8 +76,9 @@ public class EditarProducto extends AppCompatActivity {
         editado= false;
         aux = false;
 
-        storage = FirebaseStorage.getInstance();
-
+        if(isNetworkAvailable()){
+            storage = FirebaseStorage.getInstance();
+        }
         Bundle b = getIntent().getExtras();
 
         ivProducto = findViewById(R.id.ivProducto);
@@ -94,20 +102,25 @@ public class EditarProducto extends AppCompatActivity {
     }
 
     private  void cargarProveedores(){
-        database.child("Proveedores").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    proveedores.add(child.getValue(Proveedor.class));
+        if(isNetworkAvailable()) {
+            database.child("Proveedores").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                        proveedores.add(child.getValue(Proveedor.class));
+                    }
+                    cargarSpinnerProveedores();
                 }
-                cargarSpinnerProveedores();
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
-            }
-        });
+                }
+            });
+        }else{
+            SQLProveedoresController sql = new SQLProveedoresController(getApplicationContext());
+            proveedores = sql.cargarProveedores();
+        }
     }
 
     private void cargarSpinnerProveedores() {
@@ -135,49 +148,58 @@ public class EditarProducto extends AppCompatActivity {
     }
 
     private void cargarProducto() {
-        database.child("Productos").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(!aux) {
-                    if (editado != true) {
-                        c = snapshot.child(codigo).getValue(Producto.class);
+        if(isNetworkAvailable()) {
+            database.child("Productos").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (!aux) {
+                        if (editado != true) {
+                            c = snapshot.child(codigo).getValue(Producto.class);
 
-                        Glide.with(getApplicationContext()).load(c.getImageUri()).into(ivProducto);
-                        etNombre.setText(c.getNombre());
-                        etCodigo.setText(c.getCodigo());
-                        etStock.setText(""+c.getStock());
-                        etPrecio.setText(""+c.getPrecio());
-                    } else {
-                        for (DataSnapshot child : snapshot.getChildren()) {
-                            if (etCodigo.getText().toString().equals(child.child("codigo").getValue().toString())) {
-                                productoexiste = true;
-                            }
-                        }
-                        if (productoexiste == false) {
-                            database = FirebaseDatabase.getInstance().getReference().child("Productos").child(newProducto.getCodigo());
-                            database.setValue(newProducto);
-                            VistaProducto.codigo = newProducto.getNombre();
-                            Toast.makeText(getApplicationContext(), "Producto Modificado Correctamente", Toast.LENGTH_LONG).show();
-                            VistaProducto.tvCodigo.setText(newProducto.getCodigo());
-                            VistaProducto.tvNombre.setText(newProducto.getNombre());
-                            VistaProducto.tvStock.setText(newProducto.getStock());
-                            VistaProducto.tvPrecio.setText(newProducto.getPrecio());
-                            finish();
+                            Glide.with(getApplicationContext()).load(c.getImageUri()).into(ivProducto);
+                            etNombre.setText(c.getNombre());
+                            etCodigo.setText(c.getCodigo());
+                            etStock.setText("" + c.getStock());
+                            etPrecio.setText("" + c.getPrecio());
                         } else {
-                            etNombre.setText("");
-                            etCodigo.setText("");
-                            etPrecio.setText("");
-                            etStock.setText("");
+                            for (DataSnapshot child : snapshot.getChildren()) {
+                                if (etCodigo.getText().toString().equals(child.child("codigo").getValue().toString())) {
+                                    productoexiste = true;
+                                }
+                            }
+                            if (productoexiste == false) {
+                                database = FirebaseDatabase.getInstance().getReference().child("Productos").child(newProducto.getCodigo());
+                                database.setValue(newProducto);
+                                VistaProducto.codigo = newProducto.getNombre();
+                                Toast.makeText(getApplicationContext(), "Producto Modificado Correctamente", Toast.LENGTH_LONG).show();
+                                VistaProducto.tvCodigo.setText(newProducto.getCodigo());
+                                VistaProducto.tvNombre.setText(newProducto.getNombre());
+                                VistaProducto.tvStock.setText(newProducto.getStock());
+                                VistaProducto.tvPrecio.setText(newProducto.getPrecio());
+                                finish();
+                            } else {
+                                etNombre.setText("");
+                                etCodigo.setText("");
+                                etPrecio.setText("");
+                                etStock.setText("");
+                            }
                         }
                     }
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
-            }
-        });
+                }
+            });
+        }else{
+            SQLProductosController sql = new SQLProductosController(getApplicationContext());
+            Producto a = sql.getProducto(codigo);
+            etNombre.setText(a.getNombre());
+            etCodigo.setText(a.getCodigo());
+            etPrecio.setText(""+a.getPrecio());
+            etStock.setText(""+a.getStock());
+        }
     }
 
     private void setup() {
@@ -188,9 +210,16 @@ public class EditarProducto extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(),"El nombre, codigo y proveedor son campos obligatorios", Toast.LENGTH_LONG).show();
                 }else {
                     newProducto = new Producto(etNombre.getText().toString(), etCodigo.getText().toString(),codigoProveedor, Integer.parseInt(etPrecio.getText().toString()), Integer.parseInt(etStock.getText().toString()), Uri.parse(c.getImageUri()), Uri.parse(c.getImgStorage()));
-                    database = FirebaseDatabase.getInstance().getReference().child("Productos").child(codigo);
-                    editado = true;
-                    database.removeValue();
+                    SQLProductosController sql = new SQLProductosController(getApplicationContext());
+                    if(isNetworkAvailable()){
+                        database = FirebaseDatabase.getInstance().getReference().child("Productos").child(codigo);
+                        editado = true;
+                        database.removeValue();
+                    }else{
+                        sql.borrarProductoAux(newProducto);
+                        sql.anadirProductoAux(newProducto);
+                    }
+                    sql.modificaProducto(newProducto);
                 }
             }
         });
@@ -267,5 +296,12 @@ public class EditarProducto extends AppCompatActivity {
 
         Glide.with(getApplicationContext()).load(imageUri).into(ivProducto);
 
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

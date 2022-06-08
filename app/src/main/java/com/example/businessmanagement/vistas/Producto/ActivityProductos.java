@@ -1,6 +1,9 @@
 package com.example.businessmanagement.vistas.Producto;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.View;
 
@@ -11,7 +14,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.businessmanagement.R;
+import com.example.businessmanagement.controladores.AcreedorAdapter;
 import com.example.businessmanagement.controladores.ProductoAdapter;
+import com.example.businessmanagement.controladores.bdLocal.SQLProductosController;
 import com.example.businessmanagement.modelos.Producto;
 import com.example.businessmanagement.vistas.Producto.CrearProducto;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -37,7 +42,9 @@ public class ActivityProductos extends AppCompatActivity {
 
         arrayProductos = new ArrayList<Producto>();
 
-        database= FirebaseDatabase.getInstance().getReference();
+        if(isNetworkAvailable()){
+            database= FirebaseDatabase.getInstance().getReference();
+        }
 
         fbAñadir = findViewById(R.id.fbAñadirProducto);
         rvProductos = findViewById(R.id.recyclerViewProductos);
@@ -58,26 +65,41 @@ public class ActivityProductos extends AppCompatActivity {
     }
 
     private void cargarProductos() {
-        database.child("Productos").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                arrayProductos.clear();
-                rvProductos.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                rvProductos.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
-                rvProductos.setAdapter(new ProductoAdapter(arrayProductos));
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    arrayProductos.add(child.getValue(Producto.class));
+        if(isNetworkAvailable()) {
+            database.child("Productos").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    arrayProductos.clear();
                     rvProductos.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                     rvProductos.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
                     rvProductos.setAdapter(new ProductoAdapter(arrayProductos));
+                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                        arrayProductos.add(child.getValue(Producto.class));
+                        rvProductos.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                        rvProductos.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
+                        rvProductos.setAdapter(new ProductoAdapter(arrayProductos));
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
-            }
+                }
 
-        });
+            });
+        }else {
+            SQLProductosController sql = new SQLProductosController(getApplicationContext());
+            arrayProductos = sql.cargarProductos();
+            rvProductos.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+            rvProductos.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
+            rvProductos.setAdapter(new ProductoAdapter(arrayProductos));
+        }
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

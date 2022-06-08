@@ -1,7 +1,10 @@
 package com.example.businessmanagement.vistas.Producto;
 
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -20,6 +23,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.example.businessmanagement.R;
 import com.example.businessmanagement.controladores.SpinnerProveedoresAdapter;
+import com.example.businessmanagement.controladores.bdLocal.SQLProductosController;
+import com.example.businessmanagement.modelos.Producto;
 import com.example.businessmanagement.modelos.Producto;
 import com.example.businessmanagement.modelos.Proveedor;
 import com.google.firebase.database.DataSnapshot;
@@ -122,36 +127,43 @@ public class CrearProducto extends AppCompatActivity {
         crear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                database.child("Productos").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if(nombreProducto.getText().toString().isEmpty()||codigoProducto.getText().toString().isEmpty()||codigoProveedor.isEmpty()){
-                            Toast.makeText(getApplicationContext(), "El nombre ,codigo y proveedor son campos obligatorios", Toast.LENGTH_LONG).show();
-                        }else{
-                            if (imageUri != null) {
-                                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                                    if (codigoProducto.getText().toString().equals(child.child("codigo").getValue().toString())) {
-                                        productoexiste = true;
-                                        break;
+                if(nombreProducto.getText().toString().isEmpty()||codigoProducto.getText().toString().isEmpty()||codigoProveedor.isEmpty()){
+                    Toast.makeText(getApplicationContext(), "El nombre ,codigo y proveedor son campos obligatorios", Toast.LENGTH_LONG).show();
+                }else {
+                    if(isNetworkAvailable()) {
+                        database.child("Productos").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                if (imageUri != null) {
+                                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                                        if (codigoProducto.getText().toString().equals(child.child("codigo").getValue().toString())) {
+                                            productoexiste = true;
+                                            break;
+                                        }
                                     }
-                                }
-                                if (productoexiste == false) {
-                                    crearProducto();
+                                    if (productoexiste == false) {
+                                        crearProducto();
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), "Este producto ya está registrado", Toast.LENGTH_LONG).show();
+                                    }
                                 } else {
-                                    Toast.makeText(getApplicationContext(), "Este producto ya está registrado", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getApplicationContext(), "Tienes que introducir una imagen", Toast.LENGTH_LONG).show();
                                 }
-                            } else {
-                                Toast.makeText(getApplicationContext(), "Tienes que introducir una imagen", Toast.LENGTH_LONG).show();
+
                             }
-                        }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+
+                        });
+                    }else{
+                        SQLProductosController sql = new SQLProductosController(getApplicationContext());
+                        crearProducto();
                     }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-
-                });
+                }
             }
         });
 
@@ -167,13 +179,17 @@ public class CrearProducto extends AppCompatActivity {
 
     private void escogerFoto() {
 
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+        if(isNetworkAvailable()){
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
 
-        try {
+            try {
 
-            startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+                startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
 
-        } catch (ActivityNotFoundException e) {
+            } catch (ActivityNotFoundException e) {
+            }
+        }else {
+            Toast.makeText(getApplicationContext(), "Sin conexión a internet no se puede establecer una foto", Toast.LENGTH_LONG).show();
         }
 
     }
@@ -232,22 +248,40 @@ public class CrearProducto extends AppCompatActivity {
     }
 
     private void crearProducto() {
-        database.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (imageUri != null) {
-                    Producto c = new Producto(nombreProducto.getText().toString(), codigoProducto.getText().toString(), codigoProveedor, Integer.parseInt(precioProducto.getText().toString()), Integer.parseInt(stockProducto.getText().toString()), imageUri, postStorage);
-                    database.child("Productos").child(c.getCodigo()).setValue(c);
+        SQLProductosController sql = new SQLProductosController(getApplicationContext());
+        if(isNetworkAvailable()) {
+            database.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (imageUri != null) {
+                        Producto c = new Producto(nombreProducto.getText().toString(), codigoProducto.getText().toString(), codigoProveedor, Integer.parseInt(precioProducto.getText().toString()), Integer.parseInt(stockProducto.getText().toString()), imageUri, postStorage);
+                        database.child("Productos").child(c.getCodigo()).setValue(c);
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
-            }
-        });
+                }
+            });
+        }else{
+            Producto a = new Producto(nombreProducto.getText().toString(), codigoProducto.getText().toString(), codigoProveedor, Integer.parseInt(precioProducto.getText().toString()), Integer.parseInt(stockProducto.getText().toString()), "", "");
+            sql.anadirProductoAux(a);
+        }
+
+        long check = sql.anadirProducto(new Producto(nombreProducto.getText().toString(), codigoProducto.getText().toString(), codigoProveedor, Integer.parseInt(precioProducto.getText().toString()), Integer.parseInt(stockProducto.getText().toString()), "", ""));
+
+        if(check == -1){
+            Toast.makeText(getApplicationContext(), "Este producto ya está registrado", Toast.LENGTH_LONG).show();
+        }
 
         onBackPressed();
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }
 

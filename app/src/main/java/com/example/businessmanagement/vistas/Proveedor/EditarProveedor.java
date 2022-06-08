@@ -1,7 +1,10 @@
 package com.example.businessmanagement.vistas.Proveedor;
 
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -17,6 +20,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.businessmanagement.R;
+import com.example.businessmanagement.controladores.bdLocal.SQLAcreedoresController;
+import com.example.businessmanagement.controladores.bdLocal.SQLProveedoresController;
 import com.example.businessmanagement.modelos.Proveedor;
 import com.example.businessmanagement.vistas.Cliente.VistaCliente;
 import com.google.firebase.database.DataSnapshot;
@@ -59,7 +64,9 @@ public class EditarProveedor extends AppCompatActivity {
         editado= false;
         aux = false;
 
-        storage = FirebaseStorage.getInstance();
+        if(isNetworkAvailable()){
+            storage = FirebaseStorage.getInstance();
+        }
 
         Bundle b = getIntent().getExtras();
 
@@ -80,50 +87,59 @@ public class EditarProveedor extends AppCompatActivity {
     }
 
     private void cargarProveedor() {
-        database = FirebaseDatabase.getInstance().getReference().child("Proveedores");
-        database.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(!aux) {
-                    if (editado != true) {
-                        a = snapshot.child(nif).getValue(Proveedor.class);
+        if(isNetworkAvailable()) {
+            database = FirebaseDatabase.getInstance().getReference().child("Proveedores");
+            database.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (!aux) {
+                        if (editado != true) {
+                            a = snapshot.child(nif).getValue(Proveedor.class);
 
-                        Glide.with(getApplicationContext()).load(a.getImageUri()).into(ivProveedor);
-                        etNombre.setText(a.getNombre());
-                        etNif.setText(a.getNif());
-                        etTelefono.setText(a.getTelefono());
-                        etEmail.setText(a.getEmail());
-                    } else {
-                        for (DataSnapshot child : snapshot.getChildren()) {
-                            if (etNif.getText().toString().equals(child.child("nif").getValue().toString())) {
-                                proveedorexiste = true;
-                            }
-                        }
-                        if (proveedorexiste == false) {
-                            database = FirebaseDatabase.getInstance().getReference().child("Proveedores").child(newProveedor.getNif());
-                            database.setValue(newProveedor);
-                            VistaCliente.dni = newProveedor.getNombre();
-                            Toast.makeText(getApplicationContext(), "Proveedor Modificado Correctamente", Toast.LENGTH_LONG).show();
-                            VistaCliente.tvDni.setText(newProveedor.getNif());
-                            VistaCliente.tvNombre.setText(newProveedor.getNombre());
-                            VistaCliente.tvTelefono.setText(newProveedor.getTelefono());
-                            VistaCliente.tvEmail.setText(newProveedor.getEmail());
-                            finish();
+                            Glide.with(getApplicationContext()).load(a.getImageUri()).into(ivProveedor);
+                            etNombre.setText(a.getNombre());
+                            etNif.setText(a.getNif());
+                            etTelefono.setText(a.getTelefono());
+                            etEmail.setText(a.getEmail());
                         } else {
-                            etNombre.setText("");
-                            etNif.setText("");
-                            etEmail.setText("");
-                            etTelefono.setText("");
+                            for (DataSnapshot child : snapshot.getChildren()) {
+                                if (etNif.getText().toString().equals(child.child("nif").getValue().toString())) {
+                                    proveedorexiste = true;
+                                }
+                            }
+                            if (proveedorexiste == false) {
+                                database = FirebaseDatabase.getInstance().getReference().child("Proveedores").child(newProveedor.getNif());
+                                database.setValue(newProveedor);
+                                VistaCliente.dni = newProveedor.getNombre();
+                                Toast.makeText(getApplicationContext(), "Proveedor Modificado Correctamente", Toast.LENGTH_LONG).show();
+                                VistaCliente.tvDni.setText(newProveedor.getNif());
+                                VistaCliente.tvNombre.setText(newProveedor.getNombre());
+                                VistaCliente.tvTelefono.setText(newProveedor.getTelefono());
+                                VistaCliente.tvEmail.setText(newProveedor.getEmail());
+                                finish();
+                            } else {
+                                etNombre.setText("");
+                                etNif.setText("");
+                                etEmail.setText("");
+                                etTelefono.setText("");
+                            }
                         }
                     }
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
-            }
-        });
+                }
+            });
+        }else{
+            SQLProveedoresController sql = new SQLProveedoresController(getApplicationContext());
+            Proveedor a = sql.getProveedor(nif);
+            etNombre.setText(a.getNombre());
+            etNif.setText(a.getNif());
+            etTelefono.setText(a.getTelefono());
+            etEmail.setText(a.getEmail());
+        }
     }
 
     private void setup() {
@@ -134,9 +150,16 @@ public class EditarProveedor extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(),"Rellene el nif y nombre", Toast.LENGTH_LONG).show();
                 }else {
                     newProveedor = new Proveedor(etNombre.getText().toString(), etNif.getText().toString(), etEmail.getText().toString(), etTelefono.getText().toString(), Uri.parse(a.getImageUri()), Uri.parse(a.getImgStorage()));
-                    database = FirebaseDatabase.getInstance().getReference().child("Proveedores").child(nif);
-                    editado = true;
-                    database.removeValue();
+                    SQLProveedoresController sql = new SQLProveedoresController(getApplicationContext());
+                    if(isNetworkAvailable()){
+                        database = FirebaseDatabase.getInstance().getReference().child("Proveedores").child(nif);
+                        editado = true;
+                        database.removeValue();
+                    }else{
+                        sql.borrarProveedorAux(newProveedor);
+                        sql.anadirProveedorAux(newProveedor);
+                    }
+                    sql.modificaProveedor(newProveedor);
                 }
             }
         });
@@ -213,5 +236,12 @@ public class EditarProveedor extends AppCompatActivity {
 
         Glide.with(getApplicationContext()).load(imageUri).into(ivProveedor);
 
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

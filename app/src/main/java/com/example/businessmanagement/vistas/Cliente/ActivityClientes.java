@@ -1,9 +1,15 @@
 package com.example.businessmanagement.vistas.Cliente;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 
+import com.example.businessmanagement.controladores.AcreedorAdapter;
 import com.example.businessmanagement.controladores.ClienteAdapter;
+import com.example.businessmanagement.controladores.bdLocal.SQLAcreedoresController;
+import com.example.businessmanagement.controladores.bdLocal.SQLClientesController;
 import com.example.businessmanagement.modelos.Cliente;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -38,7 +44,9 @@ public class ActivityClientes extends AppCompatActivity {
 
         arrayClientes = new ArrayList<Cliente>();
 
-        database= FirebaseDatabase.getInstance().getReference();
+        if(isNetworkAvailable()){
+            database= FirebaseDatabase.getInstance().getReference();
+        }
 
         fbAñadir = findViewById(R.id.fbAñadirCliente);
         rvClientes = findViewById(R.id.recyclerViewClientes);
@@ -59,26 +67,41 @@ public class ActivityClientes extends AppCompatActivity {
     }
 
     private void cargarClientes() {
-        database.child("Clientes").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                arrayClientes.clear();
-                rvClientes.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                rvClientes.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
-                rvClientes.setAdapter(new ClienteAdapter(arrayClientes));
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    arrayClientes.add(child.getValue(Cliente.class));
+        if(isNetworkAvailable()) {
+            database.child("Clientes").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    arrayClientes.clear();
                     rvClientes.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                     rvClientes.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
                     rvClientes.setAdapter(new ClienteAdapter(arrayClientes));
+                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                        arrayClientes.add(child.getValue(Cliente.class));
+                        rvClientes.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                        rvClientes.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
+                        rvClientes.setAdapter(new ClienteAdapter(arrayClientes));
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
-            }
+                }
 
-        });
+            });
+        }else {
+            SQLClientesController sql = new SQLClientesController(getApplicationContext());
+            arrayClientes = sql.cargarClientes();
+            rvClientes.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+            rvClientes.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
+            rvClientes.setAdapter(new ClienteAdapter(arrayClientes));
+        }
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

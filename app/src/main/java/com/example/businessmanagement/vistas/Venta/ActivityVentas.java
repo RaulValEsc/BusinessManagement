@@ -1,5 +1,8 @@
 package com.example.businessmanagement.vistas.Venta;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.businessmanagement.R;
 import com.example.businessmanagement.controladores.VentaAdapter;
+import com.example.businessmanagement.controladores.bdLocal.SQLVentasController;
 import com.example.businessmanagement.modelos.Venta;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,7 +36,9 @@ public class ActivityVentas extends AppCompatActivity {
 
         arrayVentas = new ArrayList<Venta>();
 
-        database= FirebaseDatabase.getInstance().getReference();
+        if(isNetworkAvailable()){
+            database= FirebaseDatabase.getInstance().getReference();
+        }
 
         rvVentas = findViewById(R.id.recyclerViewVentas);
 
@@ -40,26 +46,41 @@ public class ActivityVentas extends AppCompatActivity {
     }
 
     private void cargarVentas() {
-        database.child("Ventas").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                arrayVentas.clear();
-                rvVentas.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                rvVentas.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
-                rvVentas.setAdapter(new VentaAdapter(arrayVentas));
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    arrayVentas.add(child.getValue(Venta.class));
+        if(isNetworkAvailable()) {
+            database.child("Ventas").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    arrayVentas.clear();
                     rvVentas.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                     rvVentas.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
                     rvVentas.setAdapter(new VentaAdapter(arrayVentas));
+                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                        arrayVentas.add(child.getValue(Venta.class));
+                        rvVentas.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                        rvVentas.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
+                        rvVentas.setAdapter(new VentaAdapter(arrayVentas));
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
-            }
+                }
 
-        });
+            });
+        }else {
+            SQLVentasController sql = new SQLVentasController(getApplicationContext());
+            arrayVentas = sql.cargarVentas();
+            rvVentas.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+            rvVentas.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
+            rvVentas.setAdapter(new VentaAdapter(arrayVentas));
+        }
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

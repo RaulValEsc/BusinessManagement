@@ -1,6 +1,9 @@
 package com.example.businessmanagement.vistas.Proveedor;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.View;
 
@@ -12,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.businessmanagement.R;
 import com.example.businessmanagement.controladores.ProveedorAdapter;
+import com.example.businessmanagement.controladores.ProveedorAdapter;
+import com.example.businessmanagement.controladores.bdLocal.SQLProveedoresController;
 import com.example.businessmanagement.modelos.Proveedor;
 import com.example.businessmanagement.vistas.Proveedor.CrearProveedor;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -37,7 +42,9 @@ public class ActivityProveedores extends AppCompatActivity {
 
         arrayProveedores = new ArrayList<Proveedor>();
 
-        database= FirebaseDatabase.getInstance().getReference();
+        if(isNetworkAvailable()){
+            database= FirebaseDatabase.getInstance().getReference();
+        }
 
         fbAñadir = findViewById(R.id.fbAñadirProveedor);
         rvProveedores = findViewById(R.id.recyclerViewProveedores);
@@ -58,27 +65,42 @@ public class ActivityProveedores extends AppCompatActivity {
     }
 
     private void cargarProveedores() {
-        database.child("Proveedores").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                arrayProveedores.clear();
-                rvProveedores.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                rvProveedores.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
-                rvProveedores.setAdapter(new ProveedorAdapter(arrayProveedores));
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    arrayProveedores.add(child.getValue(Proveedor.class));
+        if(isNetworkAvailable()) {
+            database.child("Proveedores").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    arrayProveedores.clear();
                     rvProveedores.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                     rvProveedores.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
                     rvProveedores.setAdapter(new ProveedorAdapter(arrayProveedores));
+                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                        arrayProveedores.add(child.getValue(Proveedor.class));
+                        rvProveedores.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                        rvProveedores.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
+                        rvProveedores.setAdapter(new ProveedorAdapter(arrayProveedores));
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
-            }
+                }
 
-        });
+            });
+        }else {
+            SQLProveedoresController sql = new SQLProveedoresController(getApplicationContext());
+            arrayProveedores = sql.cargarProveedores();
+            rvProveedores.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+            rvProveedores.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
+            rvProveedores.setAdapter(new ProveedorAdapter(arrayProveedores));
+        }
     }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
 }
 

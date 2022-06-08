@@ -1,6 +1,9 @@
 package com.example.businessmanagement.vistas.Trabajador;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.View;
 
@@ -12,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.businessmanagement.R;
 import com.example.businessmanagement.controladores.TrabajadorAdapter;
+import com.example.businessmanagement.controladores.TrabajadorAdapter;
+import com.example.businessmanagement.controladores.bdLocal.SQLTrabajadoresController;
 import com.example.businessmanagement.modelos.Trabajador;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
@@ -36,7 +41,9 @@ public class ActivityTrabajadores extends AppCompatActivity {
 
         arrayTrabajadores = new ArrayList<Trabajador>();
 
-        database= FirebaseDatabase.getInstance().getReference();
+        if(isNetworkAvailable()){
+            database= FirebaseDatabase.getInstance().getReference();
+        }
 
         fbAñadir = findViewById(R.id.fbAñadirTrabajador);
         rvTrabajadores = findViewById(R.id.recyclerViewTrabajadores);
@@ -57,26 +64,41 @@ public class ActivityTrabajadores extends AppCompatActivity {
     }
 
     private void cargarTrabajadores() {
-        database.child("Trabajadores").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                arrayTrabajadores.clear();
-                rvTrabajadores.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                rvTrabajadores.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
-                rvTrabajadores.setAdapter(new TrabajadorAdapter(arrayTrabajadores));
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    arrayTrabajadores.add(child.getValue(Trabajador.class));
+        if(isNetworkAvailable()) {
+            database.child("Trabajadores").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    arrayTrabajadores.clear();
                     rvTrabajadores.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                     rvTrabajadores.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
                     rvTrabajadores.setAdapter(new TrabajadorAdapter(arrayTrabajadores));
+                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                        arrayTrabajadores.add(child.getValue(Trabajador.class));
+                        rvTrabajadores.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                        rvTrabajadores.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
+                        rvTrabajadores.setAdapter(new TrabajadorAdapter(arrayTrabajadores));
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
-            }
+                }
 
-        });
+            });
+        }else {
+            SQLTrabajadoresController sql = new SQLTrabajadoresController(getApplicationContext());
+            arrayTrabajadores = sql.cargarTrabajadores();
+            rvTrabajadores.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+            rvTrabajadores.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
+            rvTrabajadores.setAdapter(new TrabajadorAdapter(arrayTrabajadores));
+        }
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

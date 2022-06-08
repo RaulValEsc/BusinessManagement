@@ -1,6 +1,9 @@
 package com.example.businessmanagement.vistas.Acreedor;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.View;
 
@@ -12,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.businessmanagement.R;
 import com.example.businessmanagement.controladores.AcreedorAdapter;
+import com.example.businessmanagement.controladores.bdLocal.SQLAcreedoresController;
+import com.example.businessmanagement.controladores.bdLocal.SQLClientesController;
 import com.example.businessmanagement.modelos.Acreedor;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
@@ -36,14 +41,23 @@ public class ActivityAcreedores extends AppCompatActivity {
 
         arrayAcreedores = new ArrayList<Acreedor>();
 
-        database= FirebaseDatabase.getInstance().getReference();
-
         fbAñadir = findViewById(R.id.fbAñadirAcreedor);
         rvAcreedores = findViewById(R.id.recyclerViewAcreedores);
 
-        cargarClientes();
+        if(isNetworkAvailable()){
+            database= FirebaseDatabase.getInstance().getReference();
+        }
+
+        cargarAcreedores();
 
         setup();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        cargarAcreedores();
     }
 
     private void setup() {
@@ -56,27 +70,42 @@ public class ActivityAcreedores extends AppCompatActivity {
         });
     }
 
-    private void cargarClientes() {
-        database.child("Acreedores").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                arrayAcreedores.clear();
-                rvAcreedores.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                rvAcreedores.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
-                rvAcreedores.setAdapter(new AcreedorAdapter(arrayAcreedores));
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    arrayAcreedores.add(child.getValue(Acreedor.class));
+    private void cargarAcreedores() {
+        if(isNetworkAvailable()){
+            database.child("Acreedores").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    arrayAcreedores.clear();
                     rvAcreedores.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                     rvAcreedores.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
                     rvAcreedores.setAdapter(new AcreedorAdapter(arrayAcreedores));
+                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                        arrayAcreedores.add(child.getValue(Acreedor.class));
+                        rvAcreedores.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                        rvAcreedores.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
+                        rvAcreedores.setAdapter(new AcreedorAdapter(arrayAcreedores));
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
-            }
+                }
 
-        });
+            });
+        }else {
+            SQLAcreedoresController sql = new SQLAcreedoresController(getApplicationContext());
+            arrayAcreedores = sql.cargarAcreedores();
+            rvAcreedores.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+            rvAcreedores.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
+            rvAcreedores.setAdapter(new AcreedorAdapter(arrayAcreedores));
+        }
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

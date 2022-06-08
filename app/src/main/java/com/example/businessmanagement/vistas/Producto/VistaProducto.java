@@ -1,6 +1,9 @@
 package com.example.businessmanagement.vistas.Producto;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,9 +17,12 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
 import com.example.businessmanagement.R;
+import com.example.businessmanagement.controladores.bdLocal.SQLProductosController;
+import com.example.businessmanagement.controladores.bdLocal.SQLProductosController;
 import com.example.businessmanagement.modelos.Compra;
 import com.example.businessmanagement.modelos.Producto;
 import com.example.businessmanagement.modelos.Venta;
+import com.example.businessmanagement.vistas.Producto.EditarProducto;
 import com.example.businessmanagement.vistas.Dialog.DialogCompra;
 import com.example.businessmanagement.vistas.Dialog.DialogVenta;
 import com.google.firebase.database.DataSnapshot;
@@ -61,31 +67,41 @@ public class VistaProducto extends AppCompatActivity implements DialogCompra.Dia
     }
 
     private void cargarProducto() {
-        database = FirebaseDatabase.getInstance().getReference().child("Productos");
-        database.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot child : snapshot.getChildren()){
-                    if(child.child("codigo").getValue().toString().equals(codigo)){
-                        producto = child.getValue(Producto.class);
+        if(isNetworkAvailable()) {
+            database = FirebaseDatabase.getInstance().getReference().child("Productos");
+            database.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot child : snapshot.getChildren()) {
+                        if (child.child("codigo").getValue().toString().equals(codigo)) {
+                            producto = child.getValue(Producto.class);
 
-                        Glide.with(getApplicationContext()).load(producto.getImageUri()).into(ivComercio);
-                        tvNombre.setText(producto.getNombre());
-                        tvCodigo.setText(producto.getCodigo());
-                        tvPrecio.setText("Precio: "+producto.getPrecio());
-                        tvStock.setText("Stock: "+producto.getStock());
+                            Glide.with(getApplicationContext()).load(producto.getImageUri()).into(ivComercio);
+                            tvNombre.setText(producto.getNombre());
+                            tvCodigo.setText(producto.getCodigo());
+                            tvPrecio.setText("Precio: " + producto.getPrecio());
+                            tvStock.setText("Stock: " + producto.getStock());
 
+                        }
                     }
+
+                    setupToolbar();
                 }
 
-                setupToolbar();
-            }
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+                }
+            });
+        }else{
+            SQLProductosController sql = new SQLProductosController(getApplicationContext());
+            producto = sql.getProducto(codigo);
+            tvNombre.setText(producto.getNombre());
+            tvCodigo.setText(producto.getCodigo());
+            tvPrecio.setText("Precio: " + producto.getPrecio());
+            tvStock.setText("Stock: " + producto.getStock());
+            setupToolbar();
+        }
     }
 
     private void setupToolbar(){
@@ -110,9 +126,19 @@ public class VistaProducto extends AppCompatActivity implements DialogCompra.Dia
 
         } else if (id == R.id.menuBorrar) {
 
+            if(producto.getNombre().isEmpty()){
+                producto.setNombre("nombreDefault");
+            }
+
             EditarProducto.aux=true;
-            database = FirebaseDatabase.getInstance().getReference().child("Productos").child(producto.getCodigo());
-            database.removeValue();
+            SQLProductosController sql = new SQLProductosController(getApplicationContext());
+            if(isNetworkAvailable()){
+                database = FirebaseDatabase.getInstance().getReference().child("Productos").child(producto.getCodigo());
+                database.removeValue();
+            }else{
+                sql.borrarProductoAux(producto);
+            }
+            sql.borrarProducto(codigo);
             finish();
 
         } else if (id == R.id.menuComprar) {
@@ -220,5 +246,12 @@ public class VistaProducto extends AppCompatActivity implements DialogCompra.Dia
         }else{
             Toast.makeText(getApplicationContext(), "No puedes vender más unidades que el stock disponible.", Toast.LENGTH_LONG).show();
         }
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

@@ -1,7 +1,10 @@
 package com.example.businessmanagement.vistas.Trabajador;
 
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -17,8 +20,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.businessmanagement.R;
+import com.example.businessmanagement.controladores.bdLocal.SQLAcreedoresController;
+import com.example.businessmanagement.controladores.bdLocal.SQLTrabajadoresController;
 import com.example.businessmanagement.modelos.Trabajador;
-import com.example.businessmanagement.vistas.Trabajador.VistaTrabajador;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -59,7 +63,9 @@ public class EditarTrabajador extends AppCompatActivity {
         editado= false;
         aux = false;
 
-        storage = FirebaseStorage.getInstance();
+        if(isNetworkAvailable()){
+            storage = FirebaseStorage.getInstance();
+        }
 
         Bundle b = getIntent().getExtras();
 
@@ -80,50 +86,59 @@ public class EditarTrabajador extends AppCompatActivity {
     }
 
     private void cargarComercio() {
-        database = FirebaseDatabase.getInstance().getReference().child("Trabajadores");
-        database.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(!aux) {
-                    if (editado != true) {
-                        c = snapshot.child(dni).getValue(Trabajador.class);
+        if(isNetworkAvailable()) {
+            database = FirebaseDatabase.getInstance().getReference().child("Trabajadores");
+            database.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (!aux) {
+                        if (editado != true) {
+                            c = snapshot.child(dni).getValue(Trabajador.class);
 
-                        Glide.with(getApplicationContext()).load(c.getImageUri()).into(ivTrabajador);
-                        etNombre.setText(c.getNombre());
-                        etDni.setText(c.getDni());
-                        etTelefono.setText(c.getTelefono());
-                        etEmail.setText(c.getEmail());
-                    } else {
-                        for (DataSnapshot child : snapshot.getChildren()) {
-                            if (etDni.getText().toString().equals(child.child("dni").getValue().toString())) {
-                                trabajadorexiste = true;
-                            }
-                        }
-                        if (trabajadorexiste == false) {
-                            database = FirebaseDatabase.getInstance().getReference().child("Trabajadores").child(newTrabajador.getDni());
-                            database.setValue(newTrabajador);
-                            VistaTrabajador.dni = newTrabajador.getNombre();
-                            Toast.makeText(getApplicationContext(), "Trabajador Modificado Correctamente", Toast.LENGTH_LONG).show();
-                            VistaTrabajador.tvDni.setText(newTrabajador.getDni());
-                            VistaTrabajador.tvNombre.setText(newTrabajador.getNombre());
-                            VistaTrabajador.tvTelefono.setText(newTrabajador.getTelefono());
-                            VistaTrabajador.tvEmail.setText(newTrabajador.getEmail());
-                            finish();
+                            Glide.with(getApplicationContext()).load(c.getImageUri()).into(ivTrabajador);
+                            etNombre.setText(c.getNombre());
+                            etDni.setText(c.getDni());
+                            etTelefono.setText(c.getTelefono());
+                            etEmail.setText(c.getEmail());
                         } else {
-                            etNombre.setText("");
-                            etDni.setText("");
-                            etEmail.setText("");
-                            etTelefono.setText("");
+                            for (DataSnapshot child : snapshot.getChildren()) {
+                                if (etDni.getText().toString().equals(child.child("dni").getValue().toString())) {
+                                    trabajadorexiste = true;
+                                }
+                            }
+                            if (trabajadorexiste == false) {
+                                database = FirebaseDatabase.getInstance().getReference().child("Trabajadores").child(newTrabajador.getDni());
+                                database.setValue(newTrabajador);
+                                VistaTrabajador.dni = newTrabajador.getNombre();
+                                Toast.makeText(getApplicationContext(), "Trabajador Modificado Correctamente", Toast.LENGTH_LONG).show();
+                                VistaTrabajador.tvDni.setText(newTrabajador.getDni());
+                                VistaTrabajador.tvNombre.setText(newTrabajador.getNombre());
+                                VistaTrabajador.tvTelefono.setText(newTrabajador.getTelefono());
+                                VistaTrabajador.tvEmail.setText(newTrabajador.getEmail());
+                                finish();
+                            } else {
+                                etNombre.setText("");
+                                etDni.setText("");
+                                etEmail.setText("");
+                                etTelefono.setText("");
+                            }
                         }
                     }
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
-            }
-        });
+                }
+            });
+        }else{
+            SQLTrabajadoresController sql = new SQLTrabajadoresController(getApplicationContext());
+            Trabajador a = sql.getTrabajador(dni);
+            etNombre.setText(a.getNombre());
+            etDni.setText(a.getDni());
+            etTelefono.setText(a.getTelefono());
+            etEmail.setText(a.getEmail());
+        }
     }
 
     private void setup() {
@@ -134,9 +149,16 @@ public class EditarTrabajador extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(),"Rellene el dni y nombre", Toast.LENGTH_LONG).show();
                 }else {
                     newTrabajador = new Trabajador(etNombre.getText().toString(), etDni.getText().toString(), etEmail.getText().toString(), etTelefono.getText().toString(), Uri.parse(c.getImageUri()), Uri.parse(c.getImgStorage()));
-                    database = FirebaseDatabase.getInstance().getReference().child("Trabajadores").child(dni);
-                    editado = true;
-                    database.removeValue();
+                    SQLTrabajadoresController sql = new SQLTrabajadoresController(getApplicationContext());
+                    if(isNetworkAvailable()){
+                        database = FirebaseDatabase.getInstance().getReference().child("Trabajadores").child(dni);
+                        editado = true;
+                        database.removeValue();
+                    }else{
+                        sql.borrarTrabajadorAux(newTrabajador);
+                        sql.anadirTrabajadorAux(newTrabajador);
+                    }
+                    sql.modificaTrabajador(newTrabajador);
                 }
             }
         });
@@ -213,5 +235,12 @@ public class EditarTrabajador extends AppCompatActivity {
 
         Glide.with(getApplicationContext()).load(imageUri).into(ivTrabajador);
 
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

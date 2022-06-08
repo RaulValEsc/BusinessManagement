@@ -1,6 +1,9 @@
 package com.example.businessmanagement.vistas.Cliente;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,6 +16,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
 import com.example.businessmanagement.R;
+import com.example.businessmanagement.controladores.bdLocal.SQLClientesController;
 import com.example.businessmanagement.modelos.Cliente;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -59,29 +63,39 @@ public class VistaCliente extends AppCompatActivity {
     }
 
     private void cargarCliente() {
-        database = FirebaseDatabase.getInstance().getReference().child("Clientes");
-        database.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot child : snapshot.getChildren()){
-                    if(child.child("dni").getValue().toString().equals(dni)){
-                        cliente = child.getValue(Cliente.class);
+        if(isNetworkAvailable()) {
+            database = FirebaseDatabase.getInstance().getReference().child("Clientes");
+            database.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot child : snapshot.getChildren()) {
+                        if (child.child("dni").getValue().toString().equals(dni)) {
+                            cliente = child.getValue(Cliente.class);
 
-                        Glide.with(getApplicationContext()).load(cliente.getImageUri()).into(ivComercio);
-                        tvNombre.setText(cliente.getNombre());
-                        tvDni.setText(cliente.getDni());
-                        tvEmail.setText(cliente.getEmail());
-                        tvTelefono.setText(cliente.getTelefono());
+                            Glide.with(getApplicationContext()).load(cliente.getImageUri()).into(ivComercio);
+                            tvNombre.setText(cliente.getNombre());
+                            tvDni.setText(cliente.getDni());
+                            tvEmail.setText(cliente.getEmail());
+                            tvTelefono.setText(cliente.getTelefono());
+                        }
                     }
+                    cargarToolbar();
                 }
-                cargarToolbar();
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
-            }
-        });
+                }
+            });
+        }else{
+            SQLClientesController sql = new SQLClientesController(getApplicationContext());
+            cliente = sql.getCliente(dni);
+            tvNombre.setText(cliente.getNombre());
+            tvDni.setText(cliente.getDni());
+            tvEmail.setText(cliente.getEmail());
+            tvTelefono.setText(cliente.getTelefono());
+            cargarToolbar();
+        }
     }
 
     @Override
@@ -101,12 +115,35 @@ public class VistaCliente extends AppCompatActivity {
 
         } else if (id == R.id.menuBorrar) {
 
+            if(cliente.getNombre().isEmpty()){
+                cliente.setNombre("nombreDefault");
+            }
+            if(cliente.getEmail().isEmpty()){
+                cliente.setEmail("emailDefault");
+            }
+            if(cliente.getTelefono().isEmpty()){
+                cliente.setTelefono("telefonoDefault");
+            }
+
             EditarCliente.aux=true;
-            database = FirebaseDatabase.getInstance().getReference().child("Clientes").child(cliente.getDni());
-            database.removeValue();
+            SQLClientesController sql = new SQLClientesController(getApplicationContext());
+            if(isNetworkAvailable()){
+                database = FirebaseDatabase.getInstance().getReference().child("Clientes").child(cliente.getDni());
+                database.removeValue();
+            }else{
+                sql.borrarClienteAux(cliente);
+            }
+            sql.borrarCliente(dni);
             finish();
 
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

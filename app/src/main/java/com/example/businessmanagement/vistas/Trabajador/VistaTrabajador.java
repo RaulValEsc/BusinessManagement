@@ -1,6 +1,9 @@
 package com.example.businessmanagement.vistas.Trabajador;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,7 +16,10 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
 import com.example.businessmanagement.R;
+import com.example.businessmanagement.controladores.bdLocal.SQLTrabajadoresController;
+import com.example.businessmanagement.controladores.bdLocal.SQLTrabajadoresController;
 import com.example.businessmanagement.modelos.Trabajador;
+import com.example.businessmanagement.vistas.Trabajador.EditarTrabajador;
 import com.example.businessmanagement.vistas.Trabajador.EditarTrabajador;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -60,29 +66,39 @@ public class VistaTrabajador extends AppCompatActivity {
     }
 
     private void cargarTrabajador() {
-        database = FirebaseDatabase.getInstance().getReference().child("Trabajadores");
-        database.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot child : snapshot.getChildren()){
-                    if(child.child("dni").getValue().toString().equals(dni)){
-                        trabajador = child.getValue(Trabajador.class);
+        if(isNetworkAvailable()) {
+            database = FirebaseDatabase.getInstance().getReference().child("Trabajadores");
+            database.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot child : snapshot.getChildren()) {
+                        if (child.child("dni").getValue().toString().equals(dni)) {
+                            trabajador = child.getValue(Trabajador.class);
 
-                        Glide.with(getApplicationContext()).load(trabajador.getImageUri()).into(ivComercio);
-                        tvNombre.setText(trabajador.getNombre());
-                        tvDni.setText(trabajador.getDni());
-                        tvEmail.setText(trabajador.getEmail());
-                        tvTelefono.setText(trabajador.getTelefono());
+                            Glide.with(getApplicationContext()).load(trabajador.getImageUri()).into(ivComercio);
+                            tvNombre.setText(trabajador.getNombre());
+                            tvDni.setText(trabajador.getDni());
+                            tvEmail.setText(trabajador.getEmail());
+                            tvTelefono.setText(trabajador.getTelefono());
+                        }
                     }
+                    cargarToolbar();
                 }
-                cargarToolbar();
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
-            }
-        });
+                }
+            });
+        }else{
+            SQLTrabajadoresController sql = new SQLTrabajadoresController(getApplicationContext());
+            trabajador = sql.getTrabajador(dni);
+            tvNombre.setText(trabajador.getNombre());
+            tvDni.setText(trabajador.getDni());
+            tvEmail.setText(trabajador.getEmail());
+            tvTelefono.setText(trabajador.getTelefono());
+            cargarToolbar();
+        }
     }
 
     @Override
@@ -102,12 +118,35 @@ public class VistaTrabajador extends AppCompatActivity {
 
         } else if (id == R.id.menuBorrar) {
 
+            if(trabajador.getNombre().isEmpty()){
+                trabajador.setNombre("nombreDefault");
+            }
+            if(trabajador.getEmail().isEmpty()){
+                trabajador.setEmail("emailDefault");
+            }
+            if(trabajador.getTelefono().isEmpty()){
+                trabajador.setTelefono("telefonoDefault");
+            }
+
             EditarTrabajador.aux=true;
-            database = FirebaseDatabase.getInstance().getReference().child("Trabajadores").child(trabajador.getDni());
-            database.removeValue();
+            SQLTrabajadoresController sql = new SQLTrabajadoresController(getApplicationContext());
+            if(isNetworkAvailable()){
+                database = FirebaseDatabase.getInstance().getReference().child("Trabajadores").child(trabajador.getDni());
+                database.removeValue();
+            }else{
+                sql.borrarTrabajadorAux(trabajador);
+            }
+            sql.borrarTrabajador(dni);
             finish();
 
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }
