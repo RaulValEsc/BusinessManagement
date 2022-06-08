@@ -25,7 +25,7 @@ public class SQLAcreedoresController extends SqLiteController{
             cv.put("nombre",acreedor.getNombre());
             cv.put("telefono",acreedor.getTelefono());
             cv.put("email",acreedor.getEmail());
-            id = db.insert(SqLiteController.TABLA_ACREEDORES,null,cv);
+            id = db.insert(TABLA_ACREEDORES,null,cv);
         }
         db.close();
         return id;
@@ -37,7 +37,7 @@ public class SQLAcreedoresController extends SqLiteController{
         SQLiteDatabase db = getWritableDatabase();
 
         if(db != null){
-            nLineas = db.delete(SqLiteController.TABLA_ACREEDORES,"nif=" + nif,null);
+            nLineas = db.delete(TABLA_ACREEDORES,"nif='" + nif+"'",null);
         }
         db.close();
         return nLineas;
@@ -53,7 +53,7 @@ public class SQLAcreedoresController extends SqLiteController{
             cv.put("nombre",acreedor.getNombre());
             cv.put("telefono",acreedor.getTelefono());
             cv.put("email",acreedor.getEmail());
-            nLineas = db.update(SqLiteController.TABLA_ACREEDORES, cv, "nif="+acreedor.getNif(), null);
+            nLineas = db.update(TABLA_ACREEDORES, cv, "nif='"+acreedor.getNif()+"'", null);
         }
         db.close();
         return nLineas;
@@ -62,7 +62,7 @@ public class SQLAcreedoresController extends SqLiteController{
     public ArrayList<Acreedor> cargarAcreedores(){
         SQLiteDatabase db = getReadableDatabase();
         ArrayList<Acreedor> listaAcreedores = new ArrayList<Acreedor>();
-        Cursor cursor = db.rawQuery("SELECT * FROM "+SqLiteController.TABLA_ACREEDORES+" ORDER BY nombre ASC , nif ASC",null);
+        Cursor cursor = db.rawQuery("SELECT * FROM "+TABLA_ACREEDORES+" ORDER BY nombre ASC , nif ASC",null);
         while (cursor.moveToNext()){
             Acreedor newAcreedor = new Acreedor();
             newAcreedor.setNif(cursor.getString(0));
@@ -79,7 +79,7 @@ public class SQLAcreedoresController extends SqLiteController{
     public Acreedor getAcreedor(String nif){
         SQLiteDatabase db = getReadableDatabase();
         Acreedor newAcreedor = new Acreedor();
-        Cursor cursor = db.rawQuery("SELECT * FROM "+SqLiteController.TABLA_ACREEDORES+" WHERE nif = "+nif,null);
+        Cursor cursor = db.rawQuery("SELECT * FROM "+TABLA_ACREEDORES+" WHERE nif LIKE '"+nif+"'",null);
         cursor.moveToFirst();
 
         newAcreedor.setNif(cursor.getString(0));
@@ -88,5 +88,73 @@ public class SQLAcreedoresController extends SqLiteController{
         newAcreedor.setEmail(cursor.getString(3));
 
         return newAcreedor;
+    }
+
+    // AUXILIARES
+
+    public long anadirAcreedorAux(Acreedor acreedor){
+        SQLiteDatabase db = getWritableDatabase();
+        long id = -1;
+
+        if(db != null){
+            ContentValues cv = new ContentValues();
+            cv.put("nif", acreedor.getNif());
+            cv.put("nombre",acreedor.getNombre());
+            cv.put("telefono",acreedor.getTelefono());
+            cv.put("email",acreedor.getEmail());
+            id = db.insert(TABLA_AUX_ACREEDORES,null,cv);
+        }
+        db.close();
+        return id;
+    }
+
+    public long borrarAcreedorAux(Acreedor acreedor){
+        SQLiteDatabase db = getWritableDatabase();
+        long id = -1;
+
+        if(db != null){
+            ContentValues cv = new ContentValues();
+            cv.put("nif", acreedor.getNif());
+            cv.put("nombre",acreedor.getNombre());
+            cv.put("telefono",acreedor.getTelefono());
+            cv.put("email",acreedor.getEmail());
+            id = db.insert(TABLA_AUX_BORRAR_ACREEDORES,null,cv);
+        }
+        db.close();
+        return id;
+    }
+
+    public ArrayList<Acreedor> cargarAcreedoresAux(){
+        SQLiteDatabase db = getReadableDatabase();
+        ArrayList<Acreedor> listaAcreedores = new ArrayList<Acreedor>();
+        Cursor cursor = db.rawQuery("SELECT * FROM "+TABLA_AUX_ACREEDORES+" ORDER BY nombre ASC , nif ASC",null);
+        while (cursor.moveToNext()){
+            Acreedor newAcreedor = new Acreedor();
+            newAcreedor.setNif(cursor.getString(0));
+            newAcreedor.setNombre(cursor.getString(1));
+            newAcreedor.setTelefono(cursor.getString(2));
+            newAcreedor.setEmail(cursor.getString(3));
+
+            listaAcreedores.add(newAcreedor);
+
+        }
+        return listaAcreedores;
+    }
+
+    public ArrayList<Acreedor> cargarAcreedoresBorrarAux(){
+        SQLiteDatabase db = getReadableDatabase();
+        ArrayList<Acreedor> listaAcreedores = new ArrayList<Acreedor>();
+        Cursor cursor = db.rawQuery("SELECT * FROM "+TABLA_AUX_BORRAR_ACREEDORES+" ORDER BY nombre ASC , nif ASC",null);
+        while (cursor.moveToNext()){
+            Acreedor newAcreedor = new Acreedor();
+            newAcreedor.setNif(cursor.getString(0));
+            newAcreedor.setNombre(cursor.getString(1));
+            newAcreedor.setTelefono(cursor.getString(2));
+            newAcreedor.setEmail(cursor.getString(3));
+
+            listaAcreedores.add(newAcreedor);
+
+        }
+        return listaAcreedores;
     }
 }

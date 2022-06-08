@@ -36,7 +36,7 @@ public class SQLVentasController extends SqLiteController{
         SQLiteDatabase db = getWritableDatabase();
 
         if(db != null){
-            nLineas = db.delete(SqLiteController.TABLA_VENTAS,"idProducto=" + idProducto,null);
+            nLineas = db.delete(SqLiteController.TABLA_VENTAS,"idProducto='" + idProducto+"'",null);
         }
         db.close();
         return nLineas;
@@ -51,7 +51,7 @@ public class SQLVentasController extends SqLiteController{
             cv.put("idProducto", venta.getIdProducto());
             cv.put("stock",venta.getStock());
             cv.put("precio",venta.getPrecio());
-            nLineas = db.update(SqLiteController.TABLA_VENTAS, cv, "idProducto="+venta.getIdProducto(), null);
+            nLineas = db.update(SqLiteController.TABLA_VENTAS, cv, "idProducto='"+venta.getIdProducto()+"'", null);
         }
         db.close();
         return nLineas;
@@ -76,7 +76,7 @@ public class SQLVentasController extends SqLiteController{
     public Venta getVenta(String idProducto){
         SQLiteDatabase db = getReadableDatabase();
         Venta newVenta = new Venta();
-        Cursor cursor = db.rawQuery("SELECT * FROM "+SqLiteController.TABLA_VENTAS+" WHERE idProducto = "+idProducto,null);
+        Cursor cursor = db.rawQuery("SELECT * FROM "+SqLiteController.TABLA_VENTAS+" WHERE idProducto = '"+idProducto+"'",null);
         cursor.moveToFirst();
 
         newVenta.setIdProducto(cursor.getString(0));
@@ -84,6 +84,70 @@ public class SQLVentasController extends SqLiteController{
         newVenta.setPrecio(cursor.getInt(2));
 
         return newVenta;
+    }
+
+    // AUXILIARES
+
+    public long anadirVentaAux(Venta venta){
+        SQLiteDatabase db = getWritableDatabase();
+        long id = -1;
+
+        if(db != null){
+            ContentValues cv = new ContentValues();
+            cv.put("idProducto", venta.getIdProducto());
+            cv.put("stock",venta.getStock());
+            cv.put("precio",venta.getPrecio());
+            id = db.insert(TABLA_AUX_VENTAS,null,cv);
+        }
+        db.close();
+        return id;
+    }
+
+    public long borrarVentaAux(Venta venta){
+        SQLiteDatabase db = getWritableDatabase();
+        long id = -1;
+
+        if(db != null){
+            ContentValues cv = new ContentValues();
+            cv.put("idProducto", venta.getIdProducto());
+            cv.put("stock",venta.getStock());
+            cv.put("precio",venta.getPrecio());
+            id = db.insert(TABLA_AUX_BORRAR_VENTAS,null,cv);
+        }
+        db.close();
+        return id;
+    }
+
+    public ArrayList<Venta> cargarVentasAux(){
+        SQLiteDatabase db = getReadableDatabase();
+        ArrayList<Venta> listaVentas = new ArrayList<Venta>();
+        Cursor cursor = db.rawQuery("SELECT * FROM "+TABLA_AUX_VENTAS,null);
+        while (cursor.moveToNext()){
+            Venta newVenta = new Venta();
+            newVenta.setIdProducto(cursor.getString(0));
+            newVenta.setStock(cursor.getInt(1));
+            newVenta.setPrecio(cursor.getInt(2));
+
+            listaVentas.add(newVenta);
+
+        }
+        return listaVentas;
+    }
+
+    public ArrayList<Venta> cargarVentasBorrarAux(){
+        SQLiteDatabase db = getReadableDatabase();
+        ArrayList<Venta> listaVentas = new ArrayList<Venta>();
+        Cursor cursor = db.rawQuery("SELECT * FROM "+TABLA_AUX_BORRAR_VENTAS,null);
+        while (cursor.moveToNext()){
+            Venta newVenta = new Venta();
+            newVenta.setIdProducto(cursor.getString(0));
+            newVenta.setStock(cursor.getInt(1));
+            newVenta.setPrecio(cursor.getInt(2));
+
+            listaVentas.add(newVenta);
+
+        }
+        return listaVentas;
     }
 }
 

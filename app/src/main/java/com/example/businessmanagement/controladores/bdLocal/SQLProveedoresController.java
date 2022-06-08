@@ -37,7 +37,7 @@ public class SQLProveedoresController extends SqLiteController{
         SQLiteDatabase db = getWritableDatabase();
 
         if(db != null){
-            nLineas = db.delete(SqLiteController.TABLA_PROVEEDORES,"nif=" + nif,null);
+            nLineas = db.delete(SqLiteController.TABLA_PROVEEDORES,"nif='" + nif+"'",null);
         }
         db.close();
         return nLineas;
@@ -53,7 +53,7 @@ public class SQLProveedoresController extends SqLiteController{
             cv.put("nombre",proveedor.getNombre());
             cv.put("telefono",proveedor.getTelefono());
             cv.put("email",proveedor.getEmail());
-            nLineas = db.update(SqLiteController.TABLA_PROVEEDORES, cv, "nif="+proveedor.getNif(), null);
+            nLineas = db.update(SqLiteController.TABLA_PROVEEDORES, cv, "nif='"+proveedor.getNif()+"'", null);
         }
         db.close();
         return nLineas;
@@ -79,7 +79,7 @@ public class SQLProveedoresController extends SqLiteController{
     public Proveedor getProveedor(String nif){
         SQLiteDatabase db = getReadableDatabase();
         Proveedor newProveedor = new Proveedor();
-        Cursor cursor = db.rawQuery("SELECT * FROM "+SqLiteController.TABLA_PROVEEDORES+" WHERE nif = "+nif,null);
+        Cursor cursor = db.rawQuery("SELECT * FROM "+SqLiteController.TABLA_PROVEEDORES+" WHERE nif = '"+nif+"'",null);
         cursor.moveToFirst();
 
         newProveedor.setNif(cursor.getString(0));
@@ -88,6 +88,74 @@ public class SQLProveedoresController extends SqLiteController{
         newProveedor.setEmail(cursor.getString(3));
 
         return newProveedor;
+    }
+
+    // AUXILIARES
+
+    public long anadirProveedorAux(Proveedor proveedor){
+        SQLiteDatabase db = getWritableDatabase();
+        long id = -1;
+
+        if(db != null){
+            ContentValues cv = new ContentValues();
+            cv.put("nif", proveedor.getNif());
+            cv.put("nombre",proveedor.getNombre());
+            cv.put("telefono",proveedor.getTelefono());
+            cv.put("email",proveedor.getEmail());
+            id = db.insert(TABLA_AUX_PROVEEDORES,null,cv);
+        }
+        db.close();
+        return id;
+    }
+
+    public long borrarProveedorAux(Proveedor proveedor){
+        SQLiteDatabase db = getWritableDatabase();
+        long id = -1;
+
+        if(db != null){
+            ContentValues cv = new ContentValues();
+            cv.put("nif", proveedor.getNif());
+            cv.put("nombre",proveedor.getNombre());
+            cv.put("telefono",proveedor.getTelefono());
+            cv.put("email",proveedor.getEmail());
+            id = db.insert(TABLA_AUX_BORRAR_PROVEEDORES,null,cv);
+        }
+        db.close();
+        return id;
+    }
+
+    public ArrayList<Proveedor> cargarProveedoresAux(){
+        SQLiteDatabase db = getReadableDatabase();
+        ArrayList<Proveedor> listaProveedores = new ArrayList<Proveedor>();
+        Cursor cursor = db.rawQuery("SELECT * FROM "+TABLA_AUX_PROVEEDORES+" ORDER BY nombre ASC , nif ASC",null);
+        while (cursor.moveToNext()){
+            Proveedor newProveedor = new Proveedor();
+            newProveedor.setNif(cursor.getString(0));
+            newProveedor.setNombre(cursor.getString(1));
+            newProveedor.setTelefono(cursor.getString(2));
+            newProveedor.setEmail(cursor.getString(3));
+
+            listaProveedores.add(newProveedor);
+
+        }
+        return listaProveedores;
+    }
+
+    public ArrayList<Proveedor> cargarProveedoresBorrarAux(){
+        SQLiteDatabase db = getReadableDatabase();
+        ArrayList<Proveedor> listaProveedores = new ArrayList<Proveedor>();
+        Cursor cursor = db.rawQuery("SELECT * FROM "+TABLA_AUX_BORRAR_PROVEEDORES+" ORDER BY nombre ASC , nif ASC",null);
+        while (cursor.moveToNext()){
+            Proveedor newProveedor = new Proveedor();
+            newProveedor.setNif(cursor.getString(0));
+            newProveedor.setNombre(cursor.getString(1));
+            newProveedor.setTelefono(cursor.getString(2));
+            newProveedor.setEmail(cursor.getString(3));
+
+            listaProveedores.add(newProveedor);
+
+        }
+        return listaProveedores;
     }
 }
 
